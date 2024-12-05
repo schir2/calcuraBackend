@@ -14,7 +14,6 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 INTERNAL_IPS = env.list('INTERNAL_IPS', default=['localhost', '127.0.0.1'])
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -27,6 +26,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'main.apps.MainConfig',
     'rest_framework',
+    "users.apps.UsersConfig"
 
 ]
 
@@ -61,7 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -71,7 +70,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -91,7 +89,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -102,7 +99,6 @@ TIME_ZONE = 'America/New_York'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -121,3 +117,5 @@ FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'),)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+from core.extensions import *
