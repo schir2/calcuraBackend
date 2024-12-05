@@ -89,8 +89,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
+AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
 
 LANGUAGE_CODE = 'en-us'
 
