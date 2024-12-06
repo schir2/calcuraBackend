@@ -26,11 +26,13 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'main.apps.MainConfig',
     'rest_framework',
-    "users.apps.UsersConfig"
+    'corsheaders',
+    'users.apps.UsersConfig'
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -120,5 +122,8 @@ FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'),)
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 from core.extensions import *
