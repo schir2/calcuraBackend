@@ -7,7 +7,7 @@ env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default='SECRET_KEY')
 
 DEBUG = env('DEBUG', default=True)
 
@@ -123,7 +123,7 @@ FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
+CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST', default=['http://localhost:3000'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:3000'])
 
 from core.extensions import *
