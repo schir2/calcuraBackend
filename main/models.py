@@ -456,9 +456,10 @@ class PlanConfig(BaseModel):
         FULL = 'full', _('Full')
 
     class RetirementStrategy(models.TextChoices):
-        FIXED_WITHDRAWAL = 'fixed_withdrawal', _('Fixed Withdrawal')
-        PERCENTAGE_OF_SAVINGS = 'percentage_of_savings', _('Percentage of Savings')
-        OTHER = 'other', _('Other')
+        DEBT_FREE = 'debt_free', _('Debt-Free')
+        AGE = 'age', _('Age-Based')
+        PERCENT_RULE = 'percent_rule', _('Percentage Rule')
+        TARGET_SAVINGS = 'target_savings', _('Target Savings')
 
     class IncomeTaxStrategy(models.TextChoices):
         SIMPLE = 'simple', _('Simple')
@@ -477,7 +478,7 @@ class PlanConfig(BaseModel):
         default=AllowNegativeDisposableIncome.NONE
     )
 
-    cash = models.ManyToManyField(
+    cashes = models.ManyToManyField(
         'CashConfig',
         related_name='plans',
         verbose_name=_("Cash Configuration")
