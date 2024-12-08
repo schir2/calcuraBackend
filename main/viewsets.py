@@ -13,10 +13,6 @@ from .models import (
     IncomeTemplate,
     IraInvestmentConfig,
     IraInvestmentTemplate,
-    RetirementConfig,
-    RetirementTemplate,
-    TaxConfig,
-    TaxTemplate,
     TaxDeferredInvestmentConfig,
     TaxDeferredInvestmentTemplate,
     PlanConfig,
@@ -35,10 +31,6 @@ from .serializers import (
     IncomeTemplateSerializer,
     IraInvestmentConfigSerializer,
     IraInvestmentTemplateSerializer,
-    RetirementConfigSerializer,
-    RetirementTemplateSerializer,
-    TaxConfigSerializer,
-    TaxTemplateSerializer,
     TaxDeferredInvestmentConfigSerializer,
     TaxDeferredInvestmentTemplateSerializer,
     PlanConfigSerializer,
@@ -104,26 +96,6 @@ class IraInvestmentConfigViewSet(viewsets.ModelViewSet):
 class IraInvestmentTemplateViewSet(viewsets.ModelViewSet):
     queryset = IraInvestmentTemplate.objects.all()
     serializer_class = IraInvestmentTemplateSerializer
-
-
-class RetirementConfigViewSet(viewsets.ModelViewSet):
-    queryset = RetirementConfig.objects.all()
-    serializer_class = RetirementConfigSerializer
-
-
-class RetirementTemplateViewSet(viewsets.ModelViewSet):
-    queryset = RetirementTemplate.objects.all()
-    serializer_class = RetirementTemplateSerializer
-
-
-class TaxConfigViewSet(viewsets.ModelViewSet):
-    queryset = TaxConfig.objects.all()
-    serializer_class = TaxConfigSerializer
-
-
-class TaxTemplateViewSet(viewsets.ModelViewSet):
-    queryset = TaxTemplate.objects.all()
-    serializer_class = TaxTemplateSerializer
 
 
 class TaxDeferredInvestmentConfigViewSet(viewsets.ModelViewSet):

@@ -348,98 +348,6 @@ class IraInvestmentTemplate(IraInvestmentConfig):
         db_table = "ira_investment_config_template"
 
 
-class RetirementConfig(BaseModel):
-    class RetirementStrategy(models.TextChoices):
-        FIXED_WITHDRAWAL = 'fixed_withdrawal', _('Fixed Withdrawal')
-        PERCENTAGE_OF_SAVINGS = 'percentage_of_savings', _('Percentage of Savings')
-        OTHER = 'other', _('Other')
-
-    name = models.CharField(max_length=255, verbose_name=_("Name"))
-    life_expectancy = models.PositiveIntegerField(
-        verbose_name=_("Life Expectancy"),
-        help_text=_("Estimated life expectancy in years.")
-    )
-    retirement_strategy = models.CharField(
-        max_length=50,
-        choices=RetirementStrategy.choices,
-        verbose_name=_("Retirement Strategy")
-    )
-    retirement_withdrawal_rate = models.FloatField(
-        verbose_name=_("Retirement Withdrawal Rate"),
-        help_text=_("Annual withdrawal rate as a percentage.")
-    )
-    retirement_income_goal = models.FloatField(
-        verbose_name=_("Retirement Income Goal"),
-        help_text=_("Annual income goal during retirement.")
-    )
-    retirement_age = models.PositiveIntegerField(
-        verbose_name=_("Retirement Age"),
-        help_text=_("The age at which retirement starts.")
-    )
-    retirement_savings_amount = models.FloatField(
-        verbose_name=_("Retirement Savings Amount"),
-        help_text=_("Initial savings amount at the time of retirement.")
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("Retirement Configuration")
-        verbose_name_plural = _("Retirement Configurations")
-
-
-class RetirementTemplate(RetirementConfig):
-    template_description = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_("Template Description"),
-        help_text=_("Description of the template for documentation purposes."),
-    )
-
-    class Meta:
-        verbose_name = _("Retirement Configuration Template")
-        verbose_name_plural = _("Retirement Configuration Templates")
-        db_table = "retirement_config_template"
-
-
-class TaxConfig(BaseModel):
-    class IncomeTaxStrategy(models.TextChoices):
-        SIMPLE = 'simple', _('Simple')
-
-    tax_strategy = models.CharField(
-        max_length=50,
-        choices=IncomeTaxStrategy.choices,
-        default=IncomeTaxStrategy.SIMPLE,
-        verbose_name=_("Tax Strategy")
-    )
-    tax_rate = models.FloatField(
-        verbose_name=_("Tax Rate"),
-        help_text=_("Applicable tax rate as a percentage.")
-    )
-
-    def __str__(self):
-        return f"{self.tax_strategy} - {self.tax_rate}%"
-
-    class Meta:
-        verbose_name = _("Tax Configuration")
-        verbose_name_plural = _("Tax Configurations")
-
-
-class TaxTemplate(TaxConfig):
-    template_description = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_("Template Description"),
-        help_text=_("Description of the template for documentation purposes."),
-    )
-
-    class Meta:
-        verbose_name = _("Tax Configuration Template")
-        verbose_name_plural = _("Tax Configuration Templates")
-        db_table = "tax_config_template"
-
-
 class TaxDeferredInvestmentConfig(BaseModel):
     class EmployerContributionStrategy(models.TextChoices):
         NONE = 'none', _('None')
@@ -547,6 +455,14 @@ class PlanConfig(BaseModel):
         MINIMUM_ONLY = 'minimum_only', _('Minimum Only')
         FULL = 'full', _('Full')
 
+    class RetirementStrategy(models.TextChoices):
+        FIXED_WITHDRAWAL = 'fixed_withdrawal', _('Fixed Withdrawal')
+        PERCENTAGE_OF_SAVINGS = 'percentage_of_savings', _('Percentage of Savings')
+        OTHER = 'other', _('Other')
+
+    class IncomeTaxStrategy(models.TextChoices):
+        SIMPLE = 'simple', _('Simple')
+
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     age = models.PositiveIntegerField(verbose_name=_("Age"))
     year = models.PositiveIntegerField(verbose_name=_("Year"))
@@ -561,24 +477,10 @@ class PlanConfig(BaseModel):
         default=AllowNegativeDisposableIncome.NONE
     )
 
-    # One-to-Many Relationships
-    retirement = models.ForeignKey(
-        'RetirementConfig',
-        on_delete=models.CASCADE,
-        related_name='plans',
-        verbose_name=_("Retirement Configuration")
-    )
-    cash = models.ForeignKey(
+    cash = models.ManyToManyField(
         'CashConfig',
-        on_delete=models.CASCADE,
         related_name='plans',
         verbose_name=_("Cash Configuration")
-    )
-    tax = models.ForeignKey(
-        'TaxConfig',
-        on_delete=models.CASCADE,
-        related_name='plans',
-        verbose_name=_("Tax Configuration")
     )
 
     # Many-to-Many Relationships
@@ -613,6 +515,43 @@ class PlanConfig(BaseModel):
         verbose_name=_("IRA Investment Configurations")
     )
 
+    life_expectancy = models.PositiveIntegerField(
+        verbose_name=_("Life Expectancy"),
+        help_text=_("Estimated life expectancy in years.")
+    )
+    retirement_strategy = models.CharField(
+        max_length=50,
+        choices=RetirementStrategy.choices,
+        verbose_name=_("Retirement Strategy")
+    )
+    retirement_withdrawal_rate = models.FloatField(
+        verbose_name=_("Retirement Withdrawal Rate"),
+        help_text=_("Annual withdrawal rate as a percentage.")
+    )
+    retirement_income_goal = models.FloatField(
+        verbose_name=_("Retirement Income Goal"),
+        help_text=_("Annual income goal during retirement.")
+    )
+    retirement_age = models.PositiveIntegerField(
+        verbose_name=_("Retirement Age"),
+        help_text=_("The age at which retirement starts.")
+    )
+    retirement_savings_amount = models.FloatField(
+        verbose_name=_("Retirement Savings Amount"),
+        help_text=_("Initial savings amount at the time of retirement.")
+    )
+
+    tax_strategy = models.CharField(
+        max_length=50,
+        choices=IncomeTaxStrategy.choices,
+        default=IncomeTaxStrategy.SIMPLE,
+        verbose_name=_("Tax Strategy")
+    )
+    tax_rate = models.FloatField(
+        verbose_name=_("Tax Rate"),
+        help_text=_("Applicable tax rate as a percentage.")
+    )
+
     def __str__(self):
         return self.name
 
@@ -642,26 +581,12 @@ class PlanTemplate(BaseModel):
     )
 
     # One-to-Many Relationships
-    retirement_template = models.ForeignKey(
-        'RetirementTemplate',
-        on_delete=models.CASCADE,
-        related_name='plan_templates',
-        verbose_name=_("Retirement Template")
-    )
     cash_template = models.ForeignKey(
         'CashTemplate',
         on_delete=models.CASCADE,
         related_name='plan_templates',
         verbose_name=_("Cash Template")
     )
-    tax_template = models.ForeignKey(
-        'TaxTemplate',
-        on_delete=models.CASCADE,
-        related_name='plan_templates',
-        verbose_name=_("Tax Template")
-    )
-
-    # Many-to-Many Relationships
     income_templates = models.ManyToManyField(
         'IncomeTemplate',
         related_name='plan_templates',

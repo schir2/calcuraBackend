@@ -13,10 +13,6 @@ from .models import (
     IncomeTemplate,
     IraInvestmentConfig,
     IraInvestmentTemplate,
-    RetirementConfig,
-    RetirementTemplate,
-    TaxConfig,
-    TaxTemplate,
     TaxDeferredInvestmentConfig,
     TaxDeferredInvestmentTemplate,
     PlanConfig,
@@ -93,30 +89,6 @@ class IraInvestmentConfigSerializer(serializers.ModelSerializer):
 class IraInvestmentTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IraInvestmentTemplate
-        fields = '__all__'
-
-
-class RetirementConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RetirementConfig
-        fields = '__all__'
-
-
-class RetirementTemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RetirementTemplate
-        fields = '__all__'
-
-
-class TaxConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxConfig
-        fields = '__all__'
-
-
-class TaxTemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TaxTemplate
         fields = '__all__'
 
 

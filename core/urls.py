@@ -17,10 +17,6 @@ from main.viewsets import (
     IncomeTemplateViewSet,
     IraInvestmentConfigViewSet,
     IraInvestmentTemplateViewSet,
-    RetirementConfigViewSet,
-    RetirementTemplateViewSet,
-    TaxConfigViewSet,
-    TaxTemplateViewSet,
     TaxDeferredInvestmentConfigViewSet,
     TaxDeferredInvestmentTemplateViewSet,
     PlanConfigViewSet,
@@ -40,10 +36,6 @@ router.register(r'income-configs', IncomeConfigViewSet)
 router.register(r'income-templates', IncomeTemplateViewSet)
 router.register(r'ira-investment-configs', IraInvestmentConfigViewSet)
 router.register(r'ira-investment-templates', IraInvestmentTemplateViewSet)
-router.register(r'retirement-configs', RetirementConfigViewSet)
-router.register(r'retirement-templates', RetirementTemplateViewSet)
-router.register(r'tax-configs', TaxConfigViewSet)
-router.register(r'tax-templates', TaxTemplateViewSet)
 router.register(r'tax-deferred-investment-configs', TaxDeferredInvestmentConfigViewSet)
 router.register(r'tax-deferred-investment-templates', TaxDeferredInvestmentTemplateViewSet)
 router.register(r'plan-configs', PlanConfigViewSet)

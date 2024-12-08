@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from .models import BrokerageInvestmentConfig, BrokerageInvestmentTemplate, CashConfig, CashTemplate, DebtConfig, \
     DebtTemplate, ExpenseTemplate, IncomeConfig, IncomeTemplate, IraInvestmentTemplate, \
-    IraInvestmentConfig, ExpenseConfig, RetirementConfig, RetirementTemplate, TaxTemplate, TaxConfig, \
-    TaxDeferredInvestmentTemplate, TaxDeferredInvestmentConfig, PlanConfig, PlanTemplate
+    IraInvestmentConfig, ExpenseConfig, TaxDeferredInvestmentTemplate, TaxDeferredInvestmentConfig, PlanConfig, \
+    PlanTemplate
 
 
 @admin.register(BrokerageInvestmentConfig)
@@ -237,78 +237,6 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(RetirementConfig)
-class RetirementConfigAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'life_expectancy',
-        'retirement_strategy',
-        'retirement_withdrawal_rate',
-        'retirement_income_goal',
-        'retirement_age',
-        'retirement_savings_amount',
-        'created_at',
-        'edited_at',
-        'creator',
-        'editor',
-    )
-    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('retirement_strategy',)
-    search_fields = ('name',)
-
-
-@admin.register(RetirementTemplate)
-class RetirementTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'template_description',
-        'life_expectancy',
-        'retirement_strategy',
-        'retirement_withdrawal_rate',
-        'retirement_income_goal',
-        'retirement_age',
-        'retirement_savings_amount',
-        'created_at',
-        'edited_at',
-        'creator',
-        'editor',
-    )
-    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('retirement_strategy',)
-    search_fields = ('name', 'template_description')
-
-
-@admin.register(TaxConfig)
-class TaxConfigAdmin(admin.ModelAdmin):
-    list_display = (
-        'tax_strategy',
-        'tax_rate',
-        'created_at',
-        'edited_at',
-        'creator',
-        'editor',
-    )
-    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('tax_strategy',)
-    search_fields = ('tax_strategy',)
-
-
-@admin.register(TaxTemplate)
-class TaxTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        'tax_strategy',
-        'tax_rate',
-        'template_description',
-        'created_at',
-        'edited_at',
-        'creator',
-        'editor',
-    )
-    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('tax_strategy',)
-    search_fields = ('tax_strategy', 'template_description')
-
-
 @admin.register(TaxDeferredInvestmentConfig)
 class TaxDeferredInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
@@ -368,9 +296,6 @@ class PlanConfigAdmin(admin.ModelAdmin):
         'year',
         'inflation_rate',
         'allow_negative_disposable_income',
-        'retirement',
-        'cash',
-        'tax',
         'created_at',
         'edited_at',
         'creator',
@@ -398,9 +323,7 @@ class PlanTemplateAdmin(admin.ModelAdmin):
         'year',
         'inflation_rate',
         'allow_negative_disposable_income',
-        'retirement_template',
         'cash_template',
-        'tax_template',
         'created_at',
         'edited_at',
         'creator',
