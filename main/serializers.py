@@ -150,7 +150,7 @@ class PlanConfigSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Extract and process related ManyToMany fields
         many_to_many_fields = [
-            ('cash', CashConfig),
+            ('cashes', CashConfig),
             ('incomes', IncomeConfig),
             ('expenses', ExpenseConfig),
             ('debts', DebtConfig),
@@ -176,7 +176,7 @@ class PlanConfigSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Handle nested objects for updates
         many_to_many_fields = [
-            ('cash', CashConfig),
+            ('cashes', CashConfig),
             ('incomes', IncomeConfig),
             ('expenses', ExpenseConfig),
             ('debts', DebtConfig),
