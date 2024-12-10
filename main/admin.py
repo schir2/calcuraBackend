@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from .models import BrokerageInvestmentConfig, BrokerageInvestmentTemplate, CashConfig, CashTemplate, DebtConfig, \
-    DebtTemplate, ExpenseTemplate, IncomeConfig, IncomeTemplate, IraInvestmentTemplate, \
-    IraInvestmentConfig, ExpenseConfig, TaxDeferredInvestmentTemplate, TaxDeferredInvestmentConfig, PlanConfig, \
+from .models import BrokerageInvestment, BrokerageInvestmentTemplate, Cash, CashTemplate, Debt, \
+    DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraInvestmentTemplate, \
+    IraInvestment, Expense, TaxDeferredInvestmentTemplate, TaxDeferredInvestment, Plan, \
     PlanTemplate
 
 
-@admin.register(BrokerageInvestmentConfig)
+@admin.register(BrokerageInvestment)
 class BrokerageInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -45,7 +45,7 @@ class BrokerageInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(CashConfig)
+@admin.register(Cash)
 class CashConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -81,7 +81,7 @@ class CashTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(DebtConfig)
+@admin.register(Debt)
 class DebtConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -122,7 +122,7 @@ class DebtTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(ExpenseConfig)
+@admin.register(Expense)
 class ExpenseConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -161,7 +161,7 @@ class ExpenseTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(IncomeConfig)
+@admin.register(Income)
 class IncomeConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -196,7 +196,7 @@ class IncomeTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(IraInvestmentConfig)
+@admin.register(IraInvestment)
 class IraInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -237,7 +237,7 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(TaxDeferredInvestmentConfig)
+@admin.register(TaxDeferredInvestment)
 class TaxDeferredInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -288,7 +288,7 @@ class TaxDeferredInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(PlanConfig)
+@admin.register(Plan)
 class PlanConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
