@@ -1,28 +1,28 @@
 from rest_framework import serializers
 
 from .models import (
-    BrokerageInvestmentConfig,
+    BrokerageInvestment,
     BrokerageInvestmentTemplate,
-    CashConfig,
+    Cash,
     CashTemplate,
-    DebtConfig,
+    Debt,
     DebtTemplate,
-    ExpenseConfig,
+    Expense,
     ExpenseTemplate,
-    IncomeConfig,
+    Income,
     IncomeTemplate,
-    IraInvestmentConfig,
+    IraInvestment,
     IraInvestmentTemplate,
-    TaxDeferredInvestmentConfig,
+    TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
-    PlanConfig,
+    Plan,
     PlanTemplate,
 )
 
 
-class BrokerageInvestmentConfigSerializer(serializers.ModelSerializer):
+class BrokerageInvestmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BrokerageInvestmentConfig
+        model = BrokerageInvestment
         fields = '__all__'
 
 
@@ -32,9 +32,9 @@ class BrokerageInvestmentTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CashConfigSerializer(serializers.ModelSerializer):
+class CashSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CashConfig
+        model = Cash
         fields = '__all__'
 
 
@@ -44,9 +44,9 @@ class CashTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DebtConfigSerializer(serializers.ModelSerializer):
+class DebtSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DebtConfig
+        model = Debt
         fields = '__all__'
 
 
@@ -56,9 +56,9 @@ class DebtTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ExpenseConfigSerializer(serializers.ModelSerializer):
+class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ExpenseConfig
+        model = Expense
         fields = '__all__'
 
 
@@ -68,9 +68,9 @@ class ExpenseTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IncomeConfigSerializer(serializers.ModelSerializer):
+class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IncomeConfig
+        model = Income
         fields = '__all__'
 
 
@@ -80,9 +80,9 @@ class IncomeTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IraInvestmentConfigSerializer(serializers.ModelSerializer):
+class IraInvestmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IraInvestmentConfig
+        model = IraInvestment
         fields = '__all__'
 
 
@@ -92,9 +92,9 @@ class IraInvestmentTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TaxDeferredInvestmentConfigSerializer(serializers.ModelSerializer):
+class TaxDeferredInvestmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TaxDeferredInvestmentConfig
+        model = TaxDeferredInvestment
         fields = '__all__'
 
 
@@ -104,17 +104,17 @@ class TaxDeferredInvestmentTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PlanConfigSerializer(serializers.ModelSerializer):
-    cashes = CashConfigSerializer(required=False, many=True)
-    incomes = IncomeConfigSerializer(required=False, many=True)
-    expenses = ExpenseConfigSerializer(required=False, many=True)
-    debts = DebtConfigSerializer(required=False, many=True)
-    tax_deferred_investments = TaxDeferredInvestmentConfigSerializer(required=False, many=True)
-    brokerage_investments = BrokerageInvestmentConfigSerializer(required=False, many=True)
-    ira_investments = IraInvestmentConfigSerializer(required=False, many=True)
+class PlanSerializer(serializers.ModelSerializer):
+    cashes = CashSerializer(required=False, many=True)
+    incomes = IncomeSerializer(required=False, many=True)
+    expenses = ExpenseSerializer(required=False, many=True)
+    debts = DebtSerializer(required=False, many=True)
+    tax_deferred_investments = TaxDeferredInvestmentSerializer(required=False, many=True)
+    brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True)
+    ira_investments = IraInvestmentSerializer(required=False, many=True)
 
     class Meta:
-        model = PlanConfig
+        model = Plan
         fields = '__all__'
 
     def process_related_field(self, field_name, related_model, related_data):
@@ -137,26 +137,26 @@ class PlanConfigSerializer(serializers.ModelSerializer):
 
     def get_related_serializer_class(self, related_model):
         related_serializers = {
-            'CashConfig': CashConfigSerializer,
-            'IncomeConfig': IncomeConfigSerializer,
-            'ExpenseConfig': ExpenseConfigSerializer,
-            'DebtConfig': DebtConfigSerializer,
-            'TaxDeferredInvestmentConfig': TaxDeferredInvestmentConfigSerializer,
-            'BrokerageInvestmentConfig': BrokerageInvestmentConfigSerializer,
-            'IraInvestmentConfig': IraInvestmentConfigSerializer,
+            'CashConfig': CashSerializer,
+            'IncomeConfig': IncomeSerializer,
+            'ExpenseConfig': ExpenseSerializer,
+            'DebtConfig': DebtSerializer,
+            'TaxDeferredInvestmentConfig': TaxDeferredInvestmentSerializer,
+            'BrokerageInvestmentConfig': BrokerageInvestmentSerializer,
+            'IraInvestmentConfig': IraInvestmentSerializer,
         }
         return related_serializers.get(related_model.__name__)
 
     def create(self, validated_data):
         # Extract and process related ManyToMany fields
         many_to_many_fields = [
-            ('cashes', CashConfig),
-            ('incomes', IncomeConfig),
-            ('expenses', ExpenseConfig),
-            ('debts', DebtConfig),
-            ('tax_deferred_investments', TaxDeferredInvestmentConfig),
-            ('brokerage_investments', BrokerageInvestmentConfig),
-            ('ira_investments', IraInvestmentConfig),
+            ('cashes', Cash),
+            ('incomes', Income),
+            ('expenses', Expense),
+            ('debts', Debt),
+            ('tax_deferred_investments', TaxDeferredInvestment),
+            ('brokerage_investments', BrokerageInvestment),
+            ('ira_investments', IraInvestment),
         ]
 
         related_objects = {}
@@ -176,13 +176,13 @@ class PlanConfigSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Handle nested objects for updates
         many_to_many_fields = [
-            ('cashes', CashConfig),
-            ('incomes', IncomeConfig),
-            ('expenses', ExpenseConfig),
-            ('debts', DebtConfig),
-            ('tax_deferred_investments', TaxDeferredInvestmentConfig),
-            ('brokerage_investments', BrokerageInvestmentConfig),
-            ('ira_investments', IraInvestmentConfig),
+            ('cashes', Cash),
+            ('incomes', Income),
+            ('expenses', Expense),
+            ('debts', Debt),
+            ('tax_deferred_investments', TaxDeferredInvestment),
+            ('brokerage_investments', BrokerageInvestment),
+            ('ira_investments', IraInvestment),
         ]
 
         related_objects = {}
@@ -205,3 +205,9 @@ class PlanTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanTemplate
         fields = '__all__'
+
+
+class ManageRelatedModelSerializer(serializers.Serializer):
+    related_model = serializers.CharField(max_length=255)
+    related_id = serializers.IntegerField()
+    action = serializers.ChoiceField(choices=['add', 'remove'])
