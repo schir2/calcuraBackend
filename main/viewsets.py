@@ -1,46 +1,51 @@
+from django.db import transaction
+from django.http import Http404
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
+from common.utils.db_utils import get_many_to_many_fields
 from .models import (
-    BrokerageInvestmentConfig,
+    BrokerageInvestment,
     BrokerageInvestmentTemplate,
-    CashConfig,
+    Cash,
     CashTemplate,
-    DebtConfig,
+    Debt,
     DebtTemplate,
-    ExpenseConfig,
+    Expense,
     ExpenseTemplate,
-    IncomeConfig,
+    Income,
     IncomeTemplate,
-    IraInvestmentConfig,
+    IraInvestment,
     IraInvestmentTemplate,
-    TaxDeferredInvestmentConfig,
+    TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
-    PlanConfig,
+    Plan,
     PlanTemplate,
 )
 from .serializers import (
-    BrokerageInvestmentConfigSerializer,
+    BrokerageInvestmentSerializer,
     BrokerageInvestmentTemplateSerializer,
-    CashConfigSerializer,
+    CashSerializer,
     CashTemplateSerializer,
-    DebtConfigSerializer,
+    DebtSerializer,
     DebtTemplateSerializer,
-    ExpenseConfigSerializer,
+    ExpenseSerializer,
     ExpenseTemplateSerializer,
-    IncomeConfigSerializer,
+    IncomeSerializer,
     IncomeTemplateSerializer,
-    IraInvestmentConfigSerializer,
+    IraInvestmentSerializer,
     IraInvestmentTemplateSerializer,
-    TaxDeferredInvestmentConfigSerializer,
+    TaxDeferredInvestmentSerializer,
     TaxDeferredInvestmentTemplateSerializer,
-    PlanConfigSerializer,
-    PlanTemplateSerializer,
+    PlanSerializer,
+    PlanTemplateSerializer, ManageRelatedModelSerializer,
 )
 
 
-class BrokerageInvestmentConfigViewSet(viewsets.ModelViewSet):
-    queryset = BrokerageInvestmentConfig.objects.all()
-    serializer_class = BrokerageInvestmentConfigSerializer
+class BrokerageInvestmentViewSet(viewsets.ModelViewSet):
+    queryset = BrokerageInvestment.objects.all()
+    serializer_class = BrokerageInvestmentSerializer
 
 
 class BrokerageInvestmentTemplateViewSet(viewsets.ModelViewSet):
@@ -48,9 +53,9 @@ class BrokerageInvestmentTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = BrokerageInvestmentTemplateSerializer
 
 
-class CashConfigViewSet(viewsets.ModelViewSet):
-    queryset = CashConfig.objects.all()
-    serializer_class = CashConfigSerializer
+class CashViewSet(viewsets.ModelViewSet):
+    queryset = Cash.objects.all()
+    serializer_class = CashSerializer
 
 
 class CashTemplateViewSet(viewsets.ModelViewSet):
@@ -58,9 +63,9 @@ class CashTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = CashTemplateSerializer
 
 
-class DebtConfigViewSet(viewsets.ModelViewSet):
-    queryset = DebtConfig.objects.all()
-    serializer_class = DebtConfigSerializer
+class DebtViewSet(viewsets.ModelViewSet):
+    queryset = Debt.objects.all()
+    serializer_class = DebtSerializer
 
 
 class DebtTemplateViewSet(viewsets.ModelViewSet):
@@ -68,9 +73,9 @@ class DebtTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = DebtTemplateSerializer
 
 
-class ExpenseConfigViewSet(viewsets.ModelViewSet):
-    queryset = ExpenseConfig.objects.all()
-    serializer_class = ExpenseConfigSerializer
+class ExpenseViewSet(viewsets.ModelViewSet):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
 
 
 class ExpenseTemplateViewSet(viewsets.ModelViewSet):
@@ -78,9 +83,9 @@ class ExpenseTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseTemplateSerializer
 
 
-class IncomeConfigViewSet(viewsets.ModelViewSet):
-    queryset = IncomeConfig.objects.all()
-    serializer_class = IncomeConfigSerializer
+class IncomeViewSet(viewsets.ModelViewSet):
+    queryset = Income.objects.all()
+    serializer_class = IncomeSerializer
 
 
 class IncomeTemplateViewSet(viewsets.ModelViewSet):
@@ -88,9 +93,9 @@ class IncomeTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = IncomeTemplateSerializer
 
 
-class IraInvestmentConfigViewSet(viewsets.ModelViewSet):
-    queryset = IraInvestmentConfig.objects.all()
-    serializer_class = IraInvestmentConfigSerializer
+class IraInvestmentViewSet(viewsets.ModelViewSet):
+    queryset = IraInvestment.objects.all()
+    serializer_class = IraInvestmentSerializer
 
 
 class IraInvestmentTemplateViewSet(viewsets.ModelViewSet):
@@ -98,9 +103,9 @@ class IraInvestmentTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = IraInvestmentTemplateSerializer
 
 
-class TaxDeferredInvestmentConfigViewSet(viewsets.ModelViewSet):
-    queryset = TaxDeferredInvestmentConfig.objects.all()
-    serializer_class = TaxDeferredInvestmentConfigSerializer
+class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
+    queryset = TaxDeferredInvestment.objects.all()
+    serializer_class = TaxDeferredInvestmentSerializer
 
 
 class TaxDeferredInvestmentTemplateViewSet(viewsets.ModelViewSet):
@@ -108,9 +113,45 @@ class TaxDeferredInvestmentTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = TaxDeferredInvestmentTemplateSerializer
 
 
-class PlanConfigViewSet(viewsets.ModelViewSet):
-    queryset = PlanConfig.objects.all()
-    serializer_class = PlanConfigSerializer
+class PlanViewSet(viewsets.ModelViewSet):
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
+
+    @action(detail=True, methods=['post'])
+    def manage_related_model(self, request, pk=None):
+        plan = self.get_object()
+
+        serializer = ManageRelatedModelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        related_model = validated_data['related_model']
+        related_pk = validated_data['related_id']
+        action = validated_data['action']
+
+        if related_model not in get_many_to_many_fields(plan):
+            raise Http404(f'{related_model} is not a valid related model for Plan')
+
+        related_manager = getattr(plan, related_model)
+
+        RelatedModel = related_manager.model
+
+        try:
+            related_instance = RelatedModel.objects.get(id=related_pk)
+        except RelatedModel.DoesNotExist:
+            raise Http404(f'{RelatedModel.__name__} with ID {related_pk} does not exist.')
+
+        with transaction.atomic():
+            if action == 'add':
+                related_manager.add(related_instance)
+                message = f"Successfully added {RelatedModel.__name__} with ID {related_pk} to {related_model}."
+            elif action == 'remove':
+                related_manager.remove(related_instance)
+                message = f"Successfully removed {RelatedModel.__name__} with ID {related_pk} from {related_model}."
+
+        return Response(
+            {"message": message}, status=200
+        )
 
 
 class PlanTemplateViewSet(viewsets.ModelViewSet):
