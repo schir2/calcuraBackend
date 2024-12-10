@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from common.models import BaseModel
 
 
-class BrokerageInvestmentConfig(BaseModel):
+class BrokerageInvestmentABC(models.Model):
     class ContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -43,11 +43,16 @@ class BrokerageInvestmentConfig(BaseModel):
         return self.name
 
     class Meta:
-        verbose_name = _("Brokerage Investment Configuration")
-        verbose_name_plural = _("Brokerage Investment Configurations")
+        abstract = True
 
 
-class BrokerageInvestmentTemplate(BrokerageInvestmentConfig):
+class BrokerageInvestment(BaseModel, BrokerageInvestmentABC):
+    class Meta:
+        verbose_name = _("Brokerage Investment")
+        verbose_name_plural = _("Brokerage Investment")
+
+
+class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
     """
     A template for creating BrokerageInvestmentConfig objects.
     """
@@ -61,10 +66,9 @@ class BrokerageInvestmentTemplate(BrokerageInvestmentConfig):
     class Meta:
         verbose_name = _("Brokerage Investment Template")
         verbose_name_plural = _("Brokerage Investment Templates")
-        db_table = "brokerage_investment_template"
 
 
-class CashConfig(BaseModel):
+class CashABC(models.Model):
     class CashMaintenanceStrategy(models.TextChoices):
         FIXED_CASH_RESERVE = 'fixedCashReserve', _('Fixed Cash Reserve')
         VARIABLE_CASH_RESERVE = 'variableCashReserve', _('Variable Cash Reserve')
@@ -96,11 +100,16 @@ class CashConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class Cash(BaseModel, CashABC):
+    class Meta:
         verbose_name = _("Cash Configuration")
         verbose_name_plural = _("Cash Configurations")
 
 
-class CashTemplate(CashConfig):
+class CashTemplate(BaseModel, CashABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -111,7 +120,6 @@ class CashTemplate(CashConfig):
     class Meta:
         verbose_name = _("Cash Configuration Template")
         verbose_name_plural = _("Cash Configuration Templates")
-        db_table = "cash_config_template"
 
 
 from django.db import models
@@ -119,7 +127,7 @@ from django.utils.translation import gettext_lazy as _
 from common.models import BaseModel
 
 
-class DebtConfig(BaseModel):
+class DebtABC(models.Model):
     class DebtPaymentStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed Payment')
         MINIMUM_PAYMENT = 'minimum_payment', _('Minimum Payment')
@@ -163,11 +171,16 @@ class DebtConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class Debt(BaseModel, DebtABC):
+    class Meta:
         verbose_name = _("Debt Configuration")
         verbose_name_plural = _("Debt Configurations")
 
 
-class DebtTemplate(DebtConfig):
+class DebtTemplate(BaseModel, DebtABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -178,10 +191,9 @@ class DebtTemplate(DebtConfig):
     class Meta:
         verbose_name = _("Debt Configuration Template")
         verbose_name_plural = _("Debt Configuration Templates")
-        db_table = "debt_config_template"
 
 
-class ExpenseConfig(BaseModel):
+class ExpenseABC(models.Model):
     class ExpenseType(models.TextChoices):
         FIXED = 'Fixed', _('Fixed')
         VARIABLE = 'Variable', _('Variable')
@@ -223,11 +235,16 @@ class ExpenseConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class Expense(BaseModel, ExpenseABC):
+    class Meta:
         verbose_name = _("Expense Configuration")
         verbose_name_plural = _("Expense Configurations")
 
 
-class ExpenseTemplate(ExpenseConfig):
+class ExpenseTemplate(BaseModel, ExpenseABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -238,10 +255,9 @@ class ExpenseTemplate(ExpenseConfig):
     class Meta:
         verbose_name = _("Expense Configuration Template")
         verbose_name_plural = _("Expense Configuration Templates")
-        db_table = "expense_config_template"
 
 
-class IncomeConfig(BaseModel):
+class IncomeABC(models.Model):
     class IncomeType(models.TextChoices):
         ORDINARY = 'ordinary', _('Ordinary')
 
@@ -265,11 +281,16 @@ class IncomeConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class Income(BaseModel, IncomeABC):
+    class Meta:
         verbose_name = _("Income Configuration")
         verbose_name_plural = _("Income Configurations")
 
 
-class IncomeTemplate(IncomeConfig):
+class IncomeTemplate(BaseModel, IncomeABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -280,10 +301,9 @@ class IncomeTemplate(IncomeConfig):
     class Meta:
         verbose_name = _("Income Configuration Template")
         verbose_name_plural = _("Income Configuration Templates")
-        db_table = "income_config_template"
 
 
-class IraInvestmentConfig(BaseModel):
+class IraInvestmentABC(models.Model):
     class IraType(models.TextChoices):
         TAX_EXEMPT = 'taxExempt', _('Tax Exempt')
         TAX_DEFERRED = 'taxDeferred', _('Tax Deferred')
@@ -330,11 +350,16 @@ class IraInvestmentConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class IraInvestment(BaseModel, IraInvestmentABC):
+    class Meta:
         verbose_name = _("IRA Investment Configuration")
         verbose_name_plural = _("IRA Investment Configurations")
 
 
-class IraInvestmentTemplate(IraInvestmentConfig):
+class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -345,10 +370,9 @@ class IraInvestmentTemplate(IraInvestmentConfig):
     class Meta:
         verbose_name = _("IRA Investment Configuration Template")
         verbose_name_plural = _("IRA Investment Configuration Templates")
-        db_table = "ira_investment_config_template"
 
 
-class TaxDeferredInvestmentConfig(BaseModel):
+class TaxDeferredInvestmentABC(models.Model):
     class EmployerContributionStrategy(models.TextChoices):
         NONE = 'none', _('None')
         PERCENTAGE_OF_CONTRIBUTION = 'percentage_of_contribution', _('Percentage of Contribution')
@@ -431,11 +455,16 @@ class TaxDeferredInvestmentConfig(BaseModel):
         return self.name
 
     class Meta:
+        abstract = True
+
+
+class TaxDeferredInvestment(BaseModel, TaxDeferredInvestmentABC):
+    class Meta:
         verbose_name = _("Tax-Deferred Investment Configuration")
         verbose_name_plural = _("Tax-Deferred Investment Configurations")
 
 
-class TaxDeferredInvestmentTemplate(TaxDeferredInvestmentConfig):
+class TaxDeferredInvestmentTemplate(BaseModel, TaxDeferredInvestmentABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -446,10 +475,9 @@ class TaxDeferredInvestmentTemplate(TaxDeferredInvestmentConfig):
     class Meta:
         verbose_name = _("Tax-Deferred Investment Configuration Template")
         verbose_name_plural = _("Tax-Deferred Investment Configuration Templates")
-        db_table = "tax_deferred_investment_config_template"
 
 
-class PlanConfig(BaseModel):
+class PlanABC(models.Model):
     class AllowNegativeDisposableIncome(models.TextChoices):
         NONE = 'none', _('None')
         MINIMUM_ONLY = 'minimum_only', _('Minimum Only')
@@ -479,39 +507,39 @@ class PlanConfig(BaseModel):
     )
 
     cashes = models.ManyToManyField(
-        'CashConfig',
+        'Cash',
         related_name='plans',
         verbose_name=_("Cash Configuration")
     )
 
     # Many-to-Many Relationships
     incomes = models.ManyToManyField(
-        'IncomeConfig',
+        'Income',
         related_name='plans',
         verbose_name=_("Income Configurations")
     )
     expenses = models.ManyToManyField(
-        'ExpenseConfig',
+        'Expense',
         related_name='plans',
         verbose_name=_("Expense Configurations")
     )
     debts = models.ManyToManyField(
-        'DebtConfig',
+        'Debt',
         related_name='plans',
         verbose_name=_("Debt Configurations")
     )
     tax_deferred_investments = models.ManyToManyField(
-        'TaxDeferredInvestmentConfig',
+        'TaxDeferredInvestment',
         related_name='plans',
         verbose_name=_("Tax-Deferred Investment Configurations")
     )
     brokerage_investments = models.ManyToManyField(
-        'BrokerageInvestmentConfig',
+        'BrokerageInvestment',
         related_name='plans',
         verbose_name=_("Brokerage Investment Configurations")
     )
     ira_investments = models.ManyToManyField(
-        'IraInvestmentConfig',
+        'IraInvestment',
         related_name='plans',
         verbose_name=_("IRA Investment Configurations")
     )
@@ -555,6 +583,12 @@ class PlanConfig(BaseModel):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        abstract = True
+
+
+class Plan(BaseModel, PlanABC):
 
     class Meta:
         verbose_name = _("Plan Configuration")
