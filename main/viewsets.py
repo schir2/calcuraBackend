@@ -149,8 +149,11 @@ class PlanViewSet(viewsets.ModelViewSet):
                 related_manager.remove(related_instance)
                 message = f"Successfully removed {RelatedModel.__name__} with ID {related_pk} from {related_model}."
 
+        plan.refresh_from_db()
+        serialized_plan = self.get_serializer(plan)
+
         return Response(
-            {"message": message}, status=200
+            serialized_plan.data, status=200
         )
 
 
