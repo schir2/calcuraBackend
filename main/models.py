@@ -483,6 +483,10 @@ class PlanABC(models.Model):
         MINIMUM_ONLY = 'minimum_only', _('Minimum Only')
         FULL = 'full', _('Full')
 
+    class GrowthApplicationStrategy(models.TextChoices):
+        START = 'start', _('Start')
+        END = 'end', _('End')
+
     class RetirementStrategy(models.TextChoices):
         DEBT_FREE = 'debt_free', _('Debt-Free')
         AGE = 'age', _('Age-Based')
@@ -504,6 +508,13 @@ class PlanABC(models.Model):
         choices=AllowNegativeDisposableIncome.choices,
         verbose_name=_("Allow Negative Disposable Income"),
         default=AllowNegativeDisposableIncome.NONE
+    )
+
+    growth_application_strategy = models.CharField(
+        max_length=50,
+        choices=GrowthApplicationStrategy.choices,
+        verbose_name=_("Growth Application Strategy"),
+        default=GrowthApplicationStrategy.START
     )
 
     cashes = models.ManyToManyField(
