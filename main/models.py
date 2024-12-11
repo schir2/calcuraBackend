@@ -314,10 +314,8 @@ class IraInvestmentABC(models.Model):
         MAX = 'max', _('Max')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
-    ira_type = models.CharField(
-        max_length=50,
-        choices=IraType.choices,
-        verbose_name=_("IRA Type")
+    is_contribution_tax_deferred = models.BooleanField(
+        default=False,
     )
     growth_rate = models.FloatField(
         verbose_name=_("Growth Rate"),

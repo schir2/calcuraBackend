@@ -200,7 +200,7 @@ class IncomeTemplateAdmin(admin.ModelAdmin):
 class IraInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'ira_type',
+        'is_contribution_tax_deferred',
         'growth_rate',
         'initial_balance',
         'contribution_strategy',
@@ -212,7 +212,7 @@ class IraInvestmentConfigAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('ira_type', 'contribution_strategy')
+    list_filter = ('is_contribution_tax_deferred', 'contribution_strategy')
     search_fields = ('name',)
 
 
@@ -221,7 +221,7 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'template_description',
-        'ira_type',
+        'is_contribution_tax_deferred',
         'growth_rate',
         'initial_balance',
         'contribution_strategy',
@@ -233,7 +233,7 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('ira_type', 'contribution_strategy')
+    list_filter = ('is_contribution_tax_deferred', 'contribution_strategy')
     search_fields = ('name', 'template_description')
 
 
