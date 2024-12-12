@@ -50,7 +50,7 @@ class CashConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'initial_amount',
-        'cash_maintenance_strategy',
+        'cash_reserve_maintenance_strategy',
         'reserve_amount',
         'reserve_months',
         'created_at',
@@ -59,7 +59,7 @@ class CashConfigAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('cash_maintenance_strategy',)
+    list_filter = ('cash_reserve_maintenance_strategy',)
     search_fields = ('name',)
 
 
@@ -68,7 +68,7 @@ class CashTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'template_description',
-        'cash_maintenance_strategy',
+        'cash_reserve_maintenance_strategy',
         'reserve_amount',
         'reserve_months',
         'created_at',
@@ -77,7 +77,7 @@ class CashTemplateAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('cash_maintenance_strategy',)
+    list_filter = ('cash_reserve_maintenance_strategy',)
     search_fields = ('name', 'template_description')
 
 

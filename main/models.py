@@ -78,7 +78,7 @@ class CashReserveABC(models.Model):
         verbose_name=_("Initial Amount"),
         help_text=_("The starting cash amount.")
     )
-    cash_maintenance_strategy = models.CharField(
+    cash_reserve_maintenance_strategy = models.CharField(
         max_length=50,
         choices=CashMaintenanceStrategy.choices,
         verbose_name=_("Cash Maintenance Strategy")
