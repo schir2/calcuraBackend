@@ -69,7 +69,7 @@ class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
 
 
 class CashReserveABC(models.Model):
-    class CashMaintenanceStrategy(models.TextChoices):
+    class CashReserveStrategy(models.TextChoices):
         FIXED_CASH_RESERVE = 'fixedCashReserve', _('Fixed Cash Reserve')
         VARIABLE_CASH_RESERVE = 'variableCashReserve', _('Variable Cash Reserve')
 
@@ -78,9 +78,9 @@ class CashReserveABC(models.Model):
         verbose_name=_("Initial Amount"),
         help_text=_("The starting cash amount.")
     )
-    cash_reserve_maintenance_strategy = models.CharField(
+    cash_reserve_strategy = models.CharField(
         max_length=50,
-        choices=CashMaintenanceStrategy.choices,
+        choices=CashReserveStrategy.choices,
         verbose_name=_("Cash Maintenance Strategy")
     )
     reserve_amount = models.FloatField(
