@@ -8,8 +8,8 @@ from common.utils.db_utils import get_many_to_many_fields
 from .models import (
     BrokerageInvestment,
     BrokerageInvestmentTemplate,
-    Cash,
-    CashTemplate,
+    CashReserve,
+    CashReserveTemplate,
     Debt,
     DebtTemplate,
     Expense,
@@ -26,7 +26,7 @@ from .models import (
 from .serializers import (
     BrokerageInvestmentSerializer,
     BrokerageInvestmentTemplateSerializer,
-    CashSerializer,
+    CashReserveSerializer,
     CashTemplateSerializer,
     DebtSerializer,
     DebtTemplateSerializer,
@@ -53,13 +53,13 @@ class BrokerageInvestmentTemplateViewSet(viewsets.ModelViewSet):
     serializer_class = BrokerageInvestmentTemplateSerializer
 
 
-class CashViewSet(viewsets.ModelViewSet):
-    queryset = Cash.objects.all()
-    serializer_class = CashSerializer
+class CashReserveViewSet(viewsets.ModelViewSet):
+    queryset = CashReserve.objects.all()
+    serializer_class = CashReserveSerializer
 
 
-class CashTemplateViewSet(viewsets.ModelViewSet):
-    queryset = CashTemplate.objects.all()
+class CashReserveTemplateViewSet(viewsets.ModelViewSet):
+    queryset = CashReserveTemplate.objects.all()
     serializer_class = CashTemplateSerializer
 
 

@@ -36,7 +36,7 @@ class GetManyToManyFieldsTests(TestCase):
 
     def test_many_to_many_field_names(self):
         # Check if get_many_to_many_fields returns correct field names
-        expected_fields = ["cashes", "incomes", "expenses", "debts", "tax_deferred_investments",
+        expected_fields = ["cash_reserves", "incomes", "expenses", "debts", "tax_deferred_investments",
                            "brokerage_investments", "ira_investments"]
         actual_fields = get_many_to_many_fields(Plan)
         self.assertListEqual(sorted(actual_fields), sorted(expected_fields))

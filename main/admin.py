@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BrokerageInvestment, BrokerageInvestmentTemplate, Cash, CashTemplate, Debt, \
+from .models import BrokerageInvestment, BrokerageInvestmentTemplate, CashReserve, CashReserveTemplate, Debt, \
     DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraInvestmentTemplate, \
     IraInvestment, Expense, TaxDeferredInvestmentTemplate, TaxDeferredInvestment, Plan, \
     PlanTemplate
@@ -45,7 +45,7 @@ class BrokerageInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'template_description')
 
 
-@admin.register(Cash)
+@admin.register(CashReserve)
 class CashConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -63,7 +63,7 @@ class CashConfigAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(CashTemplate)
+@admin.register(CashReserveTemplate)
 class CashTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -323,7 +323,6 @@ class PlanTemplateAdmin(admin.ModelAdmin):
         'year',
         'inflation_rate',
         'allow_negative_disposable_income',
-        'cash_template',
         'created_at',
         'edited_at',
         'creator',

@@ -3,8 +3,8 @@ from rest_framework import serializers
 from .models import (
     BrokerageInvestment,
     BrokerageInvestmentTemplate,
-    Cash,
-    CashTemplate,
+    CashReserve,
+    CashReserveTemplate,
     Debt,
     DebtTemplate,
     Expense,
@@ -32,15 +32,15 @@ class BrokerageInvestmentTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CashSerializer(serializers.ModelSerializer):
+class CashReserveSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cash
+        model = CashReserve
         fields = '__all__'
 
 
 class CashTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CashTemplate
+        model = CashReserveTemplate
         fields = '__all__'
 
 
@@ -105,7 +105,7 @@ class TaxDeferredInvestmentTemplateSerializer(serializers.ModelSerializer):
 
 
 class PlanSerializer(serializers.ModelSerializer):
-    cashes = CashSerializer(required=False, many=True)
+    cash_reserves = CashReserveSerializer(required=False, many=True)
     incomes = IncomeSerializer(required=False, many=True)
     expenses = ExpenseSerializer(required=False, many=True)
     debts = DebtSerializer(required=False, many=True)
@@ -137,7 +137,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
     def get_related_serializer_class(self, related_model):
         related_serializers = {
-            'CashConfig': CashSerializer,
+            'CashConfig': CashReserveSerializer,
             'IncomeConfig': IncomeSerializer,
             'ExpenseConfig': ExpenseSerializer,
             'DebtConfig': DebtSerializer,
@@ -150,7 +150,7 @@ class PlanSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Extract and process related ManyToMany fields
         many_to_many_fields = [
-            ('cashes', Cash),
+            ('cash_reserves', CashReserve),
             ('incomes', Income),
             ('expenses', Expense),
             ('debts', Debt),
@@ -176,7 +176,7 @@ class PlanSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Handle nested objects for updates
         many_to_many_fields = [
-            ('cashes', Cash),
+            ('cash_reserves', CashReserve),
             ('incomes', Income),
             ('expenses', Expense),
             ('debts', Debt),

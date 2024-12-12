@@ -7,8 +7,8 @@ from rest_framework.routers import DefaultRouter
 from main.viewsets import (
     BrokerageInvestmentViewSet,
     BrokerageInvestmentTemplateViewSet,
-    CashViewSet,
-    CashTemplateViewSet,
+    CashReserveViewSet,
+    CashReserveTemplateViewSet,
     DebtViewSet,
     DebtTemplateViewSet,
     ExpenseViewSet,
@@ -26,8 +26,8 @@ from main.viewsets import (
 router = DefaultRouter()
 router.register(r'brokerage-investments', BrokerageInvestmentViewSet)
 router.register(r'brokerage-investment-templates', BrokerageInvestmentTemplateViewSet)
-router.register(r'cashes', CashViewSet)
-router.register(r'cash-templates', CashTemplateViewSet)
+router.register(r'cash-reserves', CashReserveViewSet)
+router.register(r'cash-reserve-templates', CashReserveTemplateViewSet)
 router.register(r'debts', DebtViewSet)
 router.register(r'debt-templates', DebtTemplateViewSet)
 router.register(r'expenses', ExpenseViewSet)

@@ -68,7 +68,7 @@ class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
         verbose_name_plural = _("Brokerage Investment Templates")
 
 
-class CashABC(models.Model):
+class CashReserveABC(models.Model):
     class CashMaintenanceStrategy(models.TextChoices):
         FIXED_CASH_RESERVE = 'fixedCashReserve', _('Fixed Cash Reserve')
         VARIABLE_CASH_RESERVE = 'variableCashReserve', _('Variable Cash Reserve')
@@ -103,13 +103,13 @@ class CashABC(models.Model):
         abstract = True
 
 
-class Cash(BaseModel, CashABC):
+class CashReserve(BaseModel, CashReserveABC):
     class Meta:
-        verbose_name = _("Cash Configuration")
-        verbose_name_plural = _("Cash Configurations")
+        verbose_name = _("Cash Reserve")
+        verbose_name_plural = _("Cash Reserves")
 
 
-class CashTemplate(BaseModel, CashABC):
+class CashReserveTemplate(BaseModel, CashReserveABC):
     template_description = models.TextField(
         null=True,
         blank=True,
@@ -515,8 +515,8 @@ class PlanABC(models.Model):
         default=GrowthApplicationStrategy.START
     )
 
-    cashes = models.ManyToManyField(
-        'Cash',
+    cash_reserves = models.ManyToManyField(
+        'CashReserve',
         related_name='plans',
         verbose_name=_("Cash Configuration")
     )
@@ -625,8 +625,8 @@ class PlanTemplate(BaseModel):
     )
 
     # One-to-Many Relationships
-    cash_template = models.ForeignKey(
-        'CashTemplate',
+    cash_reserve_templates = models.ForeignKey(
+        'CashReserveTemplate',
         on_delete=models.CASCADE,
         related_name='plan_templates',
         verbose_name=_("Cash Template")
