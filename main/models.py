@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -261,6 +262,12 @@ class IncomeABC(models.Model):
     class IncomeType(models.TextChoices):
         ORDINARY = 'ordinary', _('Ordinary')
 
+    class Frequency(models.TextChoices):
+        WEEKLY = 'weekly', _('Weekly')
+        MONTHLY = 'monthly', _('Monthly')
+        QUARTERLY = 'quarterly', _('Quarterly')
+        ANNUAL = 'annual', _('Annual')
+
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     gross_income = models.FloatField(
         verbose_name=_("Gross Income"),
@@ -275,6 +282,13 @@ class IncomeABC(models.Model):
         choices=IncomeType.choices,
         default=IncomeType.ORDINARY,
         verbose_name=_("Income Type")
+    )
+
+    frequency = models.CharField(
+        max_length=50,
+        choices=Frequency.choices,
+        default=Frequency.ANNUAL,
+        verbose_name=_("Frequency")
     )
 
     def __str__(self):
@@ -518,7 +532,7 @@ class PlanABC(models.Model):
     cash_reserves = models.ManyToManyField(
         'CashReserve',
         related_name='plans',
-        verbose_name=_("Cash Configuration")
+        verbose_name=_("Cash Configuration"),
     )
 
     # Many-to-Many Relationships
@@ -564,19 +578,23 @@ class PlanABC(models.Model):
     )
     retirement_withdrawal_rate = models.FloatField(
         verbose_name=_("Retirement Withdrawal Rate"),
-        help_text=_("Annual withdrawal rate as a percentage.")
+        help_text=_("Annual withdrawal rate as a percentage."),
+        null=True
     )
     retirement_income_goal = models.FloatField(
         verbose_name=_("Retirement Income Goal"),
-        help_text=_("Annual income goal during retirement.")
+        help_text=_("Annual income goal during retirement."),
+        null=True,
     )
     retirement_age = models.PositiveIntegerField(
         verbose_name=_("Retirement Age"),
-        help_text=_("The age at which retirement starts.")
+        help_text=_("The age at which retirement starts."),
+        default=settings.DEFAULT_RETIREMENT_AGE
     )
     retirement_savings_amount = models.FloatField(
         verbose_name=_("Retirement Savings Amount"),
-        help_text=_("Initial savings amount at the time of retirement.")
+        help_text=_("Initial savings amount at the time of retirement."),
+        null=True,
     )
 
     tax_strategy = models.CharField(
