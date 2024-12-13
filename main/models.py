@@ -202,6 +202,7 @@ class ExpenseABC(models.Model):
     class Frequency(models.TextChoices):
         MONTHLY = 'monthly', _('Monthly')
         WEEKLY = 'weekly', _('Weekly')
+        BIWEEKLY = 'biweekly', _('Biweekly')
         QUARTERLY = 'quarterly', _('Quarterly')
         ANNUALLY = 'annually', _('Annually')
         ONE_TIME = 'one_time', _('One Time')
