@@ -70,8 +70,8 @@ class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
 
 class CashReserveABC(models.Model):
     class CashReserveStrategy(models.TextChoices):
-        FIXED_CASH_RESERVE = 'fixedCashReserve', _('Fixed Cash Reserve')
-        VARIABLE_CASH_RESERVE = 'variableCashReserve', _('Variable Cash Reserve')
+        FIXED_CASH_RESERVE = 'fixed', _('Fixed Cash Reserve')
+        VARIABLE_CASH_RESERVE = 'variable', _('Variable Cash Reserve')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     initial_amount = models.FloatField(
@@ -195,15 +195,15 @@ class DebtTemplate(BaseModel, DebtABC):
 
 class ExpenseABC(models.Model):
     class ExpenseType(models.TextChoices):
-        FIXED = 'Fixed', _('Fixed')
-        VARIABLE = 'Variable', _('Variable')
+        FIXED = 'fixed', _('Fixed')
+        VARIABLE = 'variable', _('Variable')
 
     class Frequency(models.TextChoices):
-        MONTHLY = 'Monthly', _('Monthly')
-        WEEKLY = 'Weekly', _('Weekly')
-        QUARTERLY = 'Quarterly', _('Quarterly')
-        ANNUALLY = 'Annually', _('Annually')
-        ONE_TIME = 'OneTime', _('One Time')
+        MONTHLY = 'monthly', _('Monthly')
+        WEEKLY = 'weekly', _('Weekly')
+        QUARTERLY = 'quarterly', _('Quarterly')
+        ANNUALLY = 'annually', _('Annually')
+        ONE_TIME = 'one_time', _('One Time')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     amount = models.FloatField(
