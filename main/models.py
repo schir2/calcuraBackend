@@ -624,42 +624,49 @@ class PlanTemplate(BaseModel):
         default=AllowNegativeDisposableIncome.NONE
     )
 
-    # One-to-Many Relationships
     cash_reserve_templates = models.ForeignKey(
         'CashReserveTemplate',
         on_delete=models.CASCADE,
         related_name='plan_templates',
-        verbose_name=_("Cash Template")
+        verbose_name=_("Cash Template"),
+        blank=True,
+        null=True,
     )
     income_templates = models.ManyToManyField(
         'IncomeTemplate',
         related_name='plan_templates',
-        verbose_name=_("Income Templates")
+        verbose_name=_("Income Templates"),
+        blank=True,
     )
     expense_templates = models.ManyToManyField(
         'ExpenseTemplate',
         related_name='plan_templates',
-        verbose_name=_("Expense Templates")
+        verbose_name=_("Expense Templates"),
+        blank=True,
     )
     debt_templates = models.ManyToManyField(
         'DebtTemplate',
         related_name='plan_templates',
-        verbose_name=_("Debt Templates")
+        verbose_name=_("Debt Templates"),
+        blank=True,
     )
     tax_deferred_investment_templates = models.ManyToManyField(
         'TaxDeferredInvestmentTemplate',
         related_name='plan_templates',
-        verbose_name=_("Tax-Deferred Investment Templates")
+        verbose_name=_("Tax-Deferred Investment Templates"),
+        blank=True,
     )
     brokerage_investment_templates = models.ManyToManyField(
         'BrokerageInvestmentTemplate',
         related_name='plan_templates',
-        verbose_name=_("Brokerage Investment Templates")
+        verbose_name=_("Brokerage Investment Templates"),
+        blank=True,
     )
     ira_investment_templates = models.ManyToManyField(
         'IraInvestmentTemplate',
         related_name='plan_templates',
-        verbose_name=_("IRA Investment Templates")
+        verbose_name=_("IRA Investment Templates"),
+        blank=True,
     )
 
     def __str__(self):
