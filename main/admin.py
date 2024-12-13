@@ -34,7 +34,7 @@ class BrokerageInvestmentTemplateAdmin(admin.ModelAdmin):
         'contribution_strategy',
         'contribution_percentage',
         'contribution_fixed_amount',
-        'template_description',
+        'description',
         'created_at',
         'edited_at',
         'creator',
@@ -42,7 +42,7 @@ class BrokerageInvestmentTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('contribution_strategy',)
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(CashReserve)
@@ -67,7 +67,7 @@ class CashConfigAdmin(admin.ModelAdmin):
 class CashTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'cash_reserve_strategy',
         'reserve_amount',
         'reserve_months',
@@ -78,7 +78,7 @@ class CashTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('cash_reserve_strategy',)
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(Debt)
@@ -105,7 +105,7 @@ class DebtConfigAdmin(admin.ModelAdmin):
 class DebtTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'principal',
         'interest_rate',
         'payment_minimum',
@@ -119,7 +119,7 @@ class DebtTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('payment_strategy',)
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(Expense)
@@ -145,7 +145,7 @@ class ExpenseConfigAdmin(admin.ModelAdmin):
 class ExpenseTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'amount',
         'type',
         'frequency',
@@ -158,7 +158,7 @@ class ExpenseTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('type', 'frequency', 'is_essential', 'is_tax_deductible')
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(Income)
@@ -182,7 +182,7 @@ class IncomeConfigAdmin(admin.ModelAdmin):
 class IncomeTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'gross_income',
         'growth_rate',
         'income_type',
@@ -193,7 +193,7 @@ class IncomeTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('income_type',)
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(IraInvestment)
@@ -220,7 +220,7 @@ class IraInvestmentConfigAdmin(admin.ModelAdmin):
 class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'is_contribution_tax_deferred',
         'growth_rate',
         'initial_balance',
@@ -234,7 +234,7 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('is_contribution_tax_deferred', 'contribution_strategy')
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(TaxDeferredInvestment)
@@ -266,7 +266,7 @@ class TaxDeferredInvestmentConfigAdmin(admin.ModelAdmin):
 class TaxDeferredInvestmentTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'template_description',
+        'description',
         'growth_rate',
         'initial_balance',
         'elective_contribution_strategy',
@@ -285,7 +285,7 @@ class TaxDeferredInvestmentTemplateAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
     list_filter = ('elective_contribution_strategy', 'employer_contributes', 'employer_contribution_strategy')
-    search_fields = ('name', 'template_description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(Plan)

@@ -56,7 +56,7 @@ class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
     """
     A template for creating BrokerageInvestmentConfig objects.
     """
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -110,7 +110,7 @@ class CashReserve(BaseModel, CashReserveABC):
 
 
 class CashReserveTemplate(BaseModel, CashReserveABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -181,7 +181,7 @@ class Debt(BaseModel, DebtABC):
 
 
 class DebtTemplate(BaseModel, DebtABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -245,7 +245,7 @@ class Expense(BaseModel, ExpenseABC):
 
 
 class ExpenseTemplate(BaseModel, ExpenseABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -291,7 +291,7 @@ class Income(BaseModel, IncomeABC):
 
 
 class IncomeTemplate(BaseModel, IncomeABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -358,7 +358,7 @@ class IraInvestment(BaseModel, IraInvestmentABC):
 
 
 class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
@@ -463,7 +463,7 @@ class TaxDeferredInvestment(BaseModel, TaxDeferredInvestmentABC):
 
 
 class TaxDeferredInvestmentTemplate(BaseModel, TaxDeferredInvestmentABC):
-    template_description = models.TextField(
+    description = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Template Description"),
