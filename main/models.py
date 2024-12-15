@@ -213,7 +213,7 @@ class ExpenseABC(models.Model):
         verbose_name=_("Amount"),
         help_text=_("The expense amount.")
     )
-    type = models.CharField(
+    expense_type = models.CharField(
         max_length=50,
         choices=ExpenseType.choices,
         verbose_name=_("Expense Type")

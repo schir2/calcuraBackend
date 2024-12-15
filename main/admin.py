@@ -127,7 +127,7 @@ class ExpenseConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'amount',
-        'type',
+        'expense_type',
         'frequency',
         'is_essential',
         'is_tax_deductible',
@@ -137,7 +137,7 @@ class ExpenseConfigAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('type', 'frequency', 'is_essential', 'is_tax_deductible')
+    list_filter = ('expense_type', 'frequency', 'is_essential', 'is_tax_deductible')
     search_fields = ('name',)
 
 
@@ -147,7 +147,7 @@ class ExpenseTemplateAdmin(admin.ModelAdmin):
         'name',
         'description',
         'amount',
-        'type',
+        'expense_type',
         'frequency',
         'is_essential',
         'is_tax_deductible',
@@ -157,7 +157,7 @@ class ExpenseTemplateAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('type', 'frequency', 'is_essential', 'is_tax_deductible')
+    list_filter = ('expense_type', 'frequency', 'is_essential', 'is_tax_deductible')
     search_fields = ('name', 'description')
 
 
