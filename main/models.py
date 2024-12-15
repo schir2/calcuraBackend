@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
@@ -510,8 +511,8 @@ class PlanABC(models.Model):
         SIMPLE = 'simple', _('Simple')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
-    age = models.PositiveIntegerField(verbose_name=_("Age"))
-    year = models.PositiveIntegerField(verbose_name=_("Year"))
+    age = models.PositiveIntegerField(verbose_name=_("Age"), default=settings.DEFAULT_AGE, blank=True, null=True)
+    year = models.PositiveIntegerField(verbose_name=_("Year"), default=timezone.now().year, blank=True, null=True)
     inflation_rate = models.FloatField(
         verbose_name=_("Inflation Rate"),
         help_text=_("Annual inflation rate as a percentage.")
@@ -617,7 +618,6 @@ class PlanABC(models.Model):
 
 
 class Plan(BaseModel, PlanABC):
-
     class Meta:
         verbose_name = _("Plan Configuration")
         verbose_name_plural = _("Plan Configurations")
@@ -630,11 +630,12 @@ class PlanTemplate(BaseModel):
         FULL = 'full', _('Full')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
-    age = models.PositiveIntegerField(verbose_name=_("Age"))
-    year = models.PositiveIntegerField(verbose_name=_("Year"))
+    age = models.PositiveIntegerField(verbose_name=_("Age"), blank=True, null=True)
+    year = models.PositiveIntegerField(verbose_name=_("Year"), blank=True, null=True)
     inflation_rate = models.FloatField(
         verbose_name=_("Inflation Rate"),
-        help_text=_("Annual inflation rate as a percentage.")
+        help_text=_("Annual inflation rate as a percentage."),
+        blank=True, null=True
     )
     allow_negative_disposable_income = models.CharField(
         max_length=50,

@@ -129,3 +129,5 @@ CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localho
 DEFAULT_RETIREMENT_AGE = 75
 
 from core.extensions import *
+
+DEFAULT_AGE = 30
