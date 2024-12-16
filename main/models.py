@@ -205,13 +205,17 @@ class ExpenseABC(models.Model):
         WEEKLY = 'weekly', _('Weekly')
         BIWEEKLY = 'biweekly', _('Biweekly')
         QUARTERLY = 'quarterly', _('Quarterly')
-        ANNUALLY = 'annually', _('Annually')
+        ANNUALLY = 'annual', _('Annually')
         ONE_TIME = 'one_time', _('One Time')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     amount = models.FloatField(
         verbose_name=_("Amount"),
         help_text=_("The expense amount.")
+    )
+    growth_rate = models.FloatField(
+        verbose_name=_("Growth Rate"),
+        help_text=_("The growth rate.")
     )
     expense_type = models.CharField(
         max_length=50,
