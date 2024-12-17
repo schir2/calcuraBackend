@@ -232,6 +232,11 @@ class ExpenseABC(models.Model):
         verbose_name=_("Is Essential"),
         help_text=_("Whether the expense is essential.")
     )
+    grows_with_inflation = models.BooleanField(
+        default=False,
+        verbose_name=_("Grows with Inflation"),
+        help_text=_("Whether the expense grows with inflation.")
+    )
     is_tax_deductible = models.BooleanField(
         default=False,
         verbose_name=_("Is Tax Deductible"),
