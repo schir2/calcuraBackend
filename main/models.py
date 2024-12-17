@@ -437,6 +437,8 @@ class TaxDeferredInvestmentABC(models.Model):
         help_text=_("Fixed amount contributed annually.")
     )
 
+    income = models.OneToOneField('Income', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Income"))
+
     employer_contributes = models.BooleanField(
         default=False,
         verbose_name=_("Employer Contributes"),
