@@ -295,14 +295,14 @@ class PlanConfigAdmin(admin.ModelAdmin):
         'age',
         'year',
         'inflation_rate',
-        'allow_negative_disposable_income',
+        'insufficient_funds_strategy',
         'created_at',
         'edited_at',
         'creator',
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('allow_negative_disposable_income',)
+    list_filter = ('insufficient_funds_strategy',)
     search_fields = ('name',)
 
     filter_horizontal = (
@@ -322,14 +322,14 @@ class PlanTemplateAdmin(admin.ModelAdmin):
         'age',
         'year',
         'inflation_rate',
-        'allow_negative_disposable_income',
+        'insufficient_funds_strategy',
         'created_at',
         'edited_at',
         'creator',
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('allow_negative_disposable_income',)
+    list_filter = ('insufficient_funds_strategy',)
     search_fields = ('name',)
 
     filter_horizontal = (

@@ -503,7 +503,7 @@ class TaxDeferredInvestmentTemplate(BaseModel, TaxDeferredInvestmentABC):
 
 
 class PlanABC(models.Model):
-    class AllowNegativeDisposableIncome(models.TextChoices):
+    class InsufficientFundsStrategy(models.TextChoices):
         NONE = 'none', _('None')
         MINIMUM_ONLY = 'minimum_only', _('Minimum Only')
         FULL = 'full', _('Full')
@@ -528,11 +528,11 @@ class PlanABC(models.Model):
         verbose_name=_("Inflation Rate"),
         help_text=_("Annual inflation rate as a percentage.")
     )
-    allow_negative_disposable_income = models.CharField(
+    insufficient_funds_strategy = models.CharField(
         max_length=50,
-        choices=AllowNegativeDisposableIncome.choices,
-        verbose_name=_("Allow Negative Disposable Income"),
-        default=AllowNegativeDisposableIncome.NONE
+        choices=InsufficientFundsStrategy.choices,
+        verbose_name=_("Insufficient Funds Strategy"),
+        default=InsufficientFundsStrategy.NONE
     )
 
     growth_application_strategy = models.CharField(
@@ -635,7 +635,7 @@ class Plan(BaseModel, PlanABC):
 
 
 class PlanTemplate(BaseModel):
-    class AllowNegativeDisposableIncome(models.TextChoices):
+    class InsufficientFundsStrategy(models.TextChoices):
         NONE = 'none', _('None')
         MINIMUM_ONLY = 'minimum_only', _('Minimum Only')
         FULL = 'full', _('Full')
@@ -648,11 +648,11 @@ class PlanTemplate(BaseModel):
         help_text=_("Annual inflation rate as a percentage."),
         blank=True, null=True
     )
-    allow_negative_disposable_income = models.CharField(
+    insufficient_funds_strategy = models.CharField(
         max_length=50,
-        choices=AllowNegativeDisposableIncome.choices,
-        verbose_name=_("Allow Negative Disposable Income"),
-        default=AllowNegativeDisposableIncome.NONE
+        choices=InsufficientFundsStrategy.choices,
+        verbose_name=_("Insufficient Funds Strategy"),
+        default=InsufficientFundsStrategy.NONE
     )
 
     cash_reserve_templates = models.ForeignKey(
