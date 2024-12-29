@@ -16,7 +16,7 @@ from .models import (
     TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
     Plan,
-    PlanTemplate,
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate,
 )
 
 
@@ -89,6 +89,18 @@ class IraInvestmentSerializer(serializers.ModelSerializer):
 class IraInvestmentTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IraInvestmentTemplate
+        fields = '__all__'
+
+
+class RothIraInvestmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RothIraInvestment
+        fields = '__all__'
+
+
+class RothIraInvestmentTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RothIraInvestmentTemplate
         fields = '__all__'
 
 

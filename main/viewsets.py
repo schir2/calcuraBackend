@@ -21,7 +21,7 @@ from .models import (
     TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
     Plan,
-    PlanTemplate,
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate,
 )
 from .serializers import (
     BrokerageInvestmentSerializer,
@@ -39,7 +39,8 @@ from .serializers import (
     TaxDeferredInvestmentSerializer,
     TaxDeferredInvestmentTemplateSerializer,
     PlanSerializer,
-    PlanTemplateSerializer, ManageRelatedModelSerializer,
+    PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraInvestmentSerializer,
+    RothIraInvestmentTemplateSerializer,
 )
 
 
@@ -101,6 +102,16 @@ class IraInvestmentViewSet(viewsets.ModelViewSet):
 class IraInvestmentTemplateViewSet(viewsets.ModelViewSet):
     queryset = IraInvestmentTemplate.objects.all()
     serializer_class = IraInvestmentTemplateSerializer
+
+
+class RothIraInvestmentViewSet(viewsets.ModelViewSet):
+    queryset = RothIraInvestment.objects.all()
+    serializer_class = RothIraInvestmentSerializer
+
+
+class RothIraInvestmentTemplateViewSet(viewsets.ModelViewSet):
+    queryset = RothIraInvestmentTemplate.objects.all()
+    serializer_class = RothIraInvestmentTemplateSerializer
 
 
 class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
