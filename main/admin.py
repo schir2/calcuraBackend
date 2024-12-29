@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import BrokerageInvestment, BrokerageInvestmentTemplate, CashReserve, CashReserveTemplate, Debt, \
     DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraInvestmentTemplate, \
     IraInvestment, Expense, TaxDeferredInvestmentTemplate, TaxDeferredInvestment, Plan, \
-    PlanTemplate
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate
 
 
 @admin.register(BrokerageInvestment)
@@ -200,7 +200,6 @@ class IncomeTemplateAdmin(admin.ModelAdmin):
 class IraInvestmentConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'is_contribution_tax_deferred',
         'growth_rate',
         'initial_balance',
         'contribution_strategy',
@@ -212,7 +211,7 @@ class IraInvestmentConfigAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('is_contribution_tax_deferred', 'contribution_strategy')
+    list_filter = ('contribution_strategy',)
     search_fields = ('name',)
 
 
@@ -221,7 +220,6 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'description',
-        'is_contribution_tax_deferred',
         'growth_rate',
         'initial_balance',
         'contribution_strategy',
@@ -233,7 +231,46 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
         'editor',
     )
     readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
-    list_filter = ('is_contribution_tax_deferred', 'contribution_strategy')
+    list_filter = ('contribution_strategy',)
+    search_fields = ('name', 'description')
+
+
+@admin.register(RothIraInvestment)
+class RothIraInvestmentConfigAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'growth_rate',
+        'initial_balance',
+        'contribution_strategy',
+        'contribution_percentage',
+        'contribution_fixed_amount',
+        'created_at',
+        'edited_at',
+        'creator',
+        'editor',
+    )
+    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
+    list_filter = ('contribution_strategy',)
+    search_fields = ('name',)
+
+
+@admin.register(RothIraInvestmentTemplate)
+class RothIraInvestmentTemplateAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'description',
+        'growth_rate',
+        'initial_balance',
+        'contribution_strategy',
+        'contribution_percentage',
+        'contribution_fixed_amount',
+        'created_at',
+        'edited_at',
+        'creator',
+        'editor',
+    )
+    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
+    list_filter = ('contribution_strategy',)
     search_fields = ('name', 'description')
 
 
