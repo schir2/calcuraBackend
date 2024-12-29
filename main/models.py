@@ -384,6 +384,67 @@ class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
         verbose_name_plural = _("IRA Investment Configuration Templates")
 
 
+class RothIraInvestmentABC(models.Model):
+
+    class RothIraContributionStrategy(models.TextChoices):
+        FIXED = 'fixed', _('Fixed')
+        PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
+        MAX = 'max', _('Max')
+
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+    growth_rate = models.FloatField(
+        verbose_name=_("Growth Rate"),
+        help_text=_("Annual growth rate as a percentage.")
+    )
+    initial_balance = models.FloatField(
+        verbose_name=_("Initial Balance"),
+        help_text=_("Initial balance in the IRA account.")
+    )
+    contribution_strategy = models.CharField(
+        max_length=50,
+        choices=RothIraContributionStrategy.choices,
+        default=RothIraContributionStrategy.FIXED,
+        verbose_name=_("Contribution Strategy")
+    )
+    contribution_percentage = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("Contribution Percentage"),
+        help_text=_("Percentage of income contributed annually.")
+    )
+    contribution_fixed_amount = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("Contribution Fixed Amount"),
+        help_text=_("Fixed amount contributed annually.")
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class RothIraInvestment(BaseModel, IraInvestmentABC):
+    class Meta:
+        verbose_name = _("Roth IRA Investment Configuration")
+        verbose_name_plural = _("Roth IRA Investment Configurations")
+
+
+class RothIraInvestmentTemplate(BaseModel, IraInvestmentABC):
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Template Description"),
+        help_text=_("Description of the template for documentation purposes."),
+    )
+
+    class Meta:
+        verbose_name = _("Roth IRA Investment Configuration Template")
+        verbose_name_plural = _("Roth IRA Investment Configuration Templates")
+
+
 class TaxDeferredInvestmentABC(models.Model):
     class EmployerContributionStrategy(models.TextChoices):
         NONE = 'none', _('None')
