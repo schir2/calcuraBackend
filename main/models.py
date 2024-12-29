@@ -124,11 +124,6 @@ class CashReserveTemplate(BaseModel, CashReserveABC):
         verbose_name_plural = _("Cash Configuration Templates")
 
 
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-from common.models import BaseModel
-
-
 class DebtABC(models.Model):
     class DebtPaymentStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed Payment')
@@ -329,9 +324,6 @@ class IncomeTemplate(BaseModel, IncomeABC):
 
 
 class IraInvestmentABC(models.Model):
-    class IraType(models.TextChoices):
-        TAX_EXEMPT = 'taxExempt', _('Tax Exempt')
-        TAX_DEFERRED = 'taxDeferred', _('Tax Deferred')
 
     class IraContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
@@ -339,9 +331,6 @@ class IraInvestmentABC(models.Model):
         MAX = 'max', _('Max')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
-    is_contribution_tax_deferred = models.BooleanField(
-        default=False,
-    )
     growth_rate = models.FloatField(
         verbose_name=_("Growth Rate"),
         help_text=_("Annual growth rate as a percentage.")
