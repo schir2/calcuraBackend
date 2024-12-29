@@ -20,7 +20,7 @@ from main.viewsets import (
     TaxDeferredInvestmentViewSet,
     TaxDeferredInvestmentTemplateViewSet,
     PlanViewSet,
-    PlanTemplateViewSet,
+    PlanTemplateViewSet, RothIraInvestmentViewSet, RothIraInvestmentTemplateViewSet,
 )
 
 router = DefaultRouter()
@@ -35,7 +35,8 @@ router.register(r'expense-templates', ExpenseTemplateViewSet)
 router.register(r'incomes', IncomeViewSet)
 router.register(r'income-templates', IncomeTemplateViewSet)
 router.register(r'ira-investments', IraInvestmentViewSet)
-router.register(r'ira-investment-templates', IraInvestmentTemplateViewSet)
+router.register(r'roth-ira-investments', RothIraInvestmentViewSet)
+router.register(r'roth-ira-investment-templates', RothIraInvestmentTemplateViewSet)
 router.register(r'tax-deferred-investments', TaxDeferredInvestmentViewSet)
 router.register(r'tax-deferred-investment-templates', TaxDeferredInvestmentTemplateViewSet)
 router.register(r'plans', PlanViewSet)
