@@ -124,6 +124,7 @@ class PlanSerializer(serializers.ModelSerializer):
     tax_deferred_investments = TaxDeferredInvestmentSerializer(required=False, many=True)
     brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True)
     ira_investments = IraInvestmentSerializer(required=False, many=True)
+    roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True)
 
     class Meta:
         model = Plan
@@ -156,6 +157,7 @@ class PlanSerializer(serializers.ModelSerializer):
             'TaxDeferredInvestmentConfig': TaxDeferredInvestmentSerializer,
             'BrokerageInvestmentConfig': BrokerageInvestmentSerializer,
             'IraInvestmentConfig': IraInvestmentSerializer,
+            'RothIraInvestmentConfig': RothIraInvestmentSerializer,
         }
         return related_serializers.get(related_model.__name__)
 
@@ -169,6 +171,7 @@ class PlanSerializer(serializers.ModelSerializer):
             ('tax_deferred_investments', TaxDeferredInvestment),
             ('brokerage_investments', BrokerageInvestment),
             ('ira_investments', IraInvestment),
+            ('roth_ira_investments', RothIraInvestment),
         ]
 
         related_objects = {}
@@ -179,7 +182,6 @@ class PlanSerializer(serializers.ModelSerializer):
         # Create the PlanConfig instance
         plan = super().create(validated_data)
 
-        # Add related objects to ManyToMany fields
         for field_name, objects in related_objects.items():
             getattr(plan, field_name).set(objects)
 
@@ -195,6 +197,7 @@ class PlanSerializer(serializers.ModelSerializer):
             ('tax_deferred_investments', TaxDeferredInvestment),
             ('brokerage_investments', BrokerageInvestment),
             ('ira_investments', IraInvestment),
+            ('roth_ira_investments', RothIraInvestment),
         ]
 
         related_objects = {}
@@ -203,10 +206,8 @@ class PlanSerializer(serializers.ModelSerializer):
                 related_data = validated_data.pop(field_name)
                 related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
 
-        # Update the PlanConfig instance
         plan = super().update(instance, validated_data)
 
-        # Update related objects in ManyToMany fields
         for field_name, objects in related_objects.items():
             getattr(plan, field_name).set(objects)
 

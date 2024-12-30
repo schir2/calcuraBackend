@@ -629,6 +629,11 @@ class PlanABC(models.Model):
         related_name='plans',
         verbose_name=_("IRA Investment Configurations")
     )
+    roth_ira_investments = models.ManyToManyField(
+        'RothIraInvestment',
+        related_name='plans',
+        verbose_name=_("Roth IRA Investment Configurations")
+    )
 
     life_expectancy = models.PositiveIntegerField(
         verbose_name=_("Life Expectancy"),
@@ -747,6 +752,12 @@ class PlanTemplate(BaseModel):
         'IraInvestmentTemplate',
         related_name='plan_templates',
         verbose_name=_("IRA Investment Templates"),
+        blank=True,
+    )
+    roth_ira_investment_templates = models.ManyToManyField(
+        'RothIraInvestmentTemplate',
+        related_name='plan_templates',
+        verbose_name=_("Roth IRA Investment Templates"),
         blank=True,
     )
 
