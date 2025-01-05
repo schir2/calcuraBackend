@@ -150,14 +150,14 @@ class PlanSerializer(serializers.ModelSerializer):
 
     def get_related_serializer_class(self, related_model):
         related_serializers = {
-            'CashConfig': CashReserveSerializer,
-            'IncomeConfig': IncomeSerializer,
-            'ExpenseConfig': ExpenseSerializer,
-            'DebtConfig': DebtSerializer,
-            'TaxDeferredInvestmentConfig': TaxDeferredInvestmentSerializer,
-            'BrokerageInvestmentConfig': BrokerageInvestmentSerializer,
-            'IraInvestmentConfig': IraInvestmentSerializer,
-            'RothIraInvestmentConfig': RothIraInvestmentSerializer,
+            'CashReserve': CashReserveSerializer,
+            'Income': IncomeSerializer,
+            'Expense': ExpenseSerializer,
+            'Debt': DebtSerializer,
+            'TaxDeferredInvestment': TaxDeferredInvestmentSerializer,
+            'BrokerageInvestment': BrokerageInvestmentSerializer,
+            'IraInvestment': IraInvestmentSerializer,
+            'RothIraInvestment': RothIraInvestmentSerializer,
         }
         return related_serializers.get(related_model.__name__)
 
