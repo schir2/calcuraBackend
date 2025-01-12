@@ -118,6 +118,10 @@ class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
     queryset = TaxDeferredInvestment.objects.all()
     serializer_class = TaxDeferredInvestmentSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        print('hi')
+        return super().get_serializer(*args, **kwargs)
+
 
 class TaxDeferredInvestmentTemplateViewSet(viewsets.ModelViewSet):
     queryset = TaxDeferredInvestmentTemplate.objects.all()

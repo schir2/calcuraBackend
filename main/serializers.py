@@ -1,5 +1,44 @@
 from rest_framework import serializers
 
+
+class IncomeOrIdField(serializers.BaseSerializer):
+    def to_internal_value(self, data):
+        if isinstance(data, int):
+            # Existing object by ID
+            try:
+                return Income.objects.get(id=data)
+            except Income.DoesNotExist:
+                raise serializers.ValidationError(
+                    f"Income with ID {data} does not exist."
+                )
+
+        elif isinstance(data, dict):
+            # If a dict includes an `id`, assume partial update of an existing object
+            income_id = data.get("id", None)
+            if income_id:
+                try:
+                    instance = Income.objects.get(id=income_id)
+                    serializer = IncomeSerializer(instance, data=data, partial=True)
+                except Income.DoesNotExist:
+                    raise serializers.ValidationError(
+                        f"Income with ID {income_id} does not exist."
+                    )
+            else:
+                # Create new Income if no ID is given
+                serializer = IncomeSerializer(data=data)
+
+            serializer.is_valid(raise_exception=True)
+            return serializer.save()
+
+        else:
+            raise serializers.ValidationError(
+                "Invalid input format. Must be either an ID or an object."
+            )
+
+    def to_representation(self, value):
+        return IncomeSerializer(value).data
+
+
 from .models import (
     BrokerageInvestment,
     BrokerageInvestmentTemplate,
@@ -105,6 +144,8 @@ class RothIraInvestmentTemplateSerializer(serializers.ModelSerializer):
 
 
 class TaxDeferredInvestmentSerializer(serializers.ModelSerializer):
+    income = IncomeOrIdField(required=False, many=False, )
+
     class Meta:
         model = TaxDeferredInvestment
         fields = '__all__'

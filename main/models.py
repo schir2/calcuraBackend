@@ -324,7 +324,6 @@ class IncomeTemplate(BaseModel, IncomeABC):
 
 
 class IraInvestmentABC(models.Model):
-
     class IraContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -366,6 +365,8 @@ class IraInvestmentABC(models.Model):
 
 
 class IraInvestment(BaseModel, IraInvestmentABC):
+    income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
+
     class Meta:
         verbose_name = _("IRA Investment Configuration")
         verbose_name_plural = _("IRA Investment Configurations")
@@ -385,7 +386,6 @@ class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
 
 
 class RothIraInvestmentABC(models.Model):
-
     class RothIraContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -427,6 +427,8 @@ class RothIraInvestmentABC(models.Model):
 
 
 class RothIraInvestment(BaseModel, IraInvestmentABC):
+    income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
+
     class Meta:
         verbose_name = _("Roth IRA Investment Configuration")
         verbose_name_plural = _("Roth IRA Investment Configurations")
@@ -487,8 +489,6 @@ class TaxDeferredInvestmentABC(models.Model):
         help_text=_("Fixed amount contributed annually.")
     )
 
-    income = models.OneToOneField('Income', blank=True, null=True, on_delete=models.SET_NULL, verbose_name=_("Income"))
-
     employer_contributes = models.BooleanField(
         default=False,
         verbose_name=_("Employer Contributes"),
@@ -533,7 +533,12 @@ class TaxDeferredInvestmentABC(models.Model):
         abstract = True
 
 
+
+
+
 class TaxDeferredInvestment(BaseModel, TaxDeferredInvestmentABC):
+    income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
+
     class Meta:
         verbose_name = _("Tax-Deferred Investment Configuration")
         verbose_name_plural = _("Tax-Deferred Investment Configurations")
