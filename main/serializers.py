@@ -3,13 +3,20 @@ from rest_framework import serializers
 
 class IncomeOrIdField(serializers.BaseSerializer):
     def to_internal_value(self, data):
+        if isinstance(data, Income):
+            return data
+        income_id = None
         if isinstance(data, int):
-            # Existing object by ID
+            income_id = data
+        elif isinstance(data, dict):
+            income_id = data.get("id", None)
+
+        if isinstance(income_id, int):
             try:
-                return Income.objects.get(id=data)
+                return Income.objects.get(id=income_id)
             except Income.DoesNotExist:
                 raise serializers.ValidationError(
-                    f"Income with ID {data} does not exist."
+                    f"Income with ID {income_id} does not exist."
                 )
 
         elif isinstance(data, dict):
@@ -114,6 +121,8 @@ class IncomeSerializer(serializers.ModelSerializer):
 
 
 class IncomeTemplateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = IncomeTemplate
         fields = '__all__'
@@ -174,9 +183,10 @@ class PlanSerializer(serializers.ModelSerializer):
     def process_related_field(self, field_name, related_model, related_data):
         validated_objects = []
         for item in related_data:
-            if isinstance(item, int):
+            item_id = item if isinstance(item, int) else item.get("id", None)
+            if isinstance(item_id, int):
                 try:
-                    obj = related_model.objects.get(id=item)
+                    obj = related_model.objects.get(id=item_id)
                     validated_objects.append(obj)
                 except related_model.DoesNotExist:
                     raise serializers.ValidationError({field_name: f'Object with ID {item} does not exist'})

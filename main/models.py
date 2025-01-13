@@ -590,6 +590,11 @@ class PlanABC(models.Model):
         default=InsufficientFundsStrategy.NONE
     )
 
+    growth_rate = models.FloatField(
+        verbose_name=_("Growth Rate"),
+        help_text=_("Annual Growth rate as a percentage.")
+    )
+
     growth_application_strategy = models.CharField(
         max_length=50,
         choices=GrowthApplicationStrategy.choices,
