@@ -675,6 +675,12 @@ class PlanABC(models.Model):
         null=True,
     )
 
+    retirement_income_adjusted_for_inflation = models.BooleanField(
+        verbose_name=_("Retirement Income Adjusted For Inflation"),
+        help_text=_("Inflation adjusted for inflation."),
+        default=True
+    )
+
     tax_strategy = models.CharField(
         max_length=50,
         choices=IncomeTaxStrategy.choices,
