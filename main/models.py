@@ -783,3 +783,19 @@ class PlanTemplate(BaseModel):
     class Meta:
         verbose_name = _("Plan Template")
         verbose_name_plural = _("Plan Templates")
+
+
+class Command(BaseModel):
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+    label = models.CharField(max_length=255, verbose_name=_("Label"))
+    manager_name = models.CharField(max_length=255, verbose_name=_("Manager Name"))
+    manager_id = models.PositiveIntegerField(verbose_name=_("Manager ID"))
+    action = models.CharField(max_length=255, verbose_name=_("Action"))
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class CommandSequence(BaseModel):
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name="command_sequences", verbose_name=_("Plan"))
