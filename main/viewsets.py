@@ -119,7 +119,6 @@ class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
     serializer_class = TaxDeferredInvestmentSerializer
 
     def get_serializer(self, *args, **kwargs):
-        print('hi')
         return super().get_serializer(*args, **kwargs)
 
 

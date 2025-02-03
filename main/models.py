@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -785,17 +787,60 @@ class PlanTemplate(BaseModel):
         verbose_name_plural = _("Plan Templates")
 
 
-class Command(BaseModel):
-    name = models.CharField(max_length=255, verbose_name=_("Name"))
-    label = models.CharField(max_length=255, verbose_name=_("Label"))
-    manager_name = models.CharField(max_length=255, verbose_name=_("Manager Name"))
-    manager_id = models.PositiveIntegerField(verbose_name=_("Manager ID"))
+class Command(models.Model):
+    """ A command that applies an action to any model (Expense, Income, Debt, etc.) """
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    related_object = GenericForeignKey("content_type", "object_id")
     action = models.CharField(max_length=255, verbose_name=_("Action"))
 
+    @property
+    def name(self):
+        return str(self.related_object)
+
+    @property
+    def label(self):
+        return getattr(self.related_object, "label", str(self.related_object))
+
+    @property
+    def manager_name(self):
+        return self.content_type.model_class().__name__
+
+    @property
+    def manager_id(self):
+        return self.object_id
+
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.label} ({self.action})"
 
 
 class CommandSequence(BaseModel):
+    class OrderingType(models.TextChoices):
+        PREDEFINED = "predefined", _("Predefined")
+        CUSTOM = "custom", _("Custom")
+
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name="command_sequences", verbose_name=_("Plan"))
+    ordering_type = models.CharField(
+        max_length=50,
+        choices=OrderingType.choices,
+        default=OrderingType.CUSTOM,
+        verbose_name=_("Ordering Type")
+    )
+
+    def get_commands(self):
+        return self.sequence_commands.all().order_by('order')
+
+    def order_commands(self):
+        pass
+
+class CommandSequenceCommand(models.Model):
+    sequence = models.ForeignKey(CommandSequence, on_delete=models.CASCADE, related_name="sequence_commands")
+    command = models.ForeignKey(Command, on_delete=models.CASCADE, related_name="command_instances")
+    order = models.PositiveIntegerField(verbose_name=_("Order"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Is active"))
+
+    class Meta:
+        unique_together = ("sequence", "command")
+        ordering = ["order"]

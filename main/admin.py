@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import BrokerageInvestment, BrokerageInvestmentTemplate, CashReserve, CashReserveTemplate, Debt, \
     DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraInvestmentTemplate, \
     IraInvestment, Expense, TaxDeferredInvestmentTemplate, TaxDeferredInvestment, Plan, \
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, Command, CommandSequence, CommandSequenceCommand
 
 
 @admin.register(BrokerageInvestment)
@@ -377,3 +377,25 @@ class PlanTemplateAdmin(admin.ModelAdmin):
         'brokerage_investment_templates',
         'ira_investment_templates',
     )
+
+
+@admin.register(Command)
+class CommandAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "label", "manager_name", "manager_id", "action")
+    search_fields = ("action",)
+    list_filter = ("action",)
+
+
+@admin.register(CommandSequence)
+class CommandSequenceAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "plan", "ordering_type")
+    search_fields = ("name", "plan__name")
+    list_filter = ("ordering_type",)
+
+
+@admin.register(CommandSequenceCommand)
+class CommandSequenceCommandAdmin(admin.ModelAdmin):
+    list_display = ("id", "sequence", "command", "order", "is_active")
+    search_fields = ("sequence__name",)
+    list_filter = ("is_active",)
+    ordering = ("sequence", "order")

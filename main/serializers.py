@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from rest_framework import serializers
 
 
@@ -64,6 +65,17 @@ from .models import (
     Plan,
     PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate,
 )
+
+MANY_TO_MANY_FIELDS = [
+    ('cash_reserves', CashReserve),
+    ('incomes', Income),
+    ('expenses', Expense),
+    ('debts', Debt),
+    ('tax_deferred_investments', TaxDeferredInvestment),
+    ('brokerage_investments', BrokerageInvestment),
+    ('ira_investments', IraInvestment),
+    ('roth_ira_investments', RothIraInvestment),
+]
 
 
 class BrokerageInvestmentSerializer(serializers.ModelSerializer):
@@ -153,11 +165,23 @@ class RothIraInvestmentTemplateSerializer(serializers.ModelSerializer):
 
 
 class TaxDeferredInvestmentSerializer(serializers.ModelSerializer):
-    income = IncomeOrIdField(required=False, many=False, )
+    income = IncomeOrIdField(required=False, many=False, allow_null=True)
 
     class Meta:
         model = TaxDeferredInvestment
         fields = '__all__'
+
+
+SERIALIZER_MAP = {
+    'CashReserve': CashReserveSerializer,
+    'Debt': DebtSerializer,
+    'Expense': ExpenseSerializer,
+    'Income': IncomeSerializer,
+    'BrokerageInvestment': BrokerageInvestmentSerializer,
+    'IraInvestment': IraInvestmentSerializer,
+    'RothIraInvestment': RothIraInvestmentSerializer,
+    'TaxDeferredInvestment': TaxDeferredInvestmentSerializer,
+}
 
 
 class TaxDeferredInvestmentTemplateSerializer(serializers.ModelSerializer):
@@ -175,10 +199,49 @@ class PlanSerializer(serializers.ModelSerializer):
     brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True)
     ira_investments = IraInvestmentSerializer(required=False, many=True)
     roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True)
+    commands = serializers.SerializerMethodField()
 
     class Meta:
         model = Plan
         fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        is_many = isinstance(instance, QuerySet)
+        if not is_many:
+            data['commands'] = self.get_commands(instance)
+
+        return data
+
+    def get_commands(self, plan: Plan):
+        sequence = plan.command_sequences.first()
+        if not sequence:
+            return []
+
+        commands = []
+        for csc in sequence.get_commands():
+            command = csc.command
+            related_object = command.related_object
+            manager_name = command.content_type.model_class().__name__
+            manager_id = command.object_id
+
+            serializer_class = SERIALIZER_MAP.get(manager_name, None)
+            serialized_data = serializer_class(related_object).data if serializer_class and related_object else None
+
+            commands.append({
+                "commandId": command.id,
+                "order": csc.order,
+                "name": command.name,
+                "label": command.label,
+                "managerName": manager_name,
+                "managerId": manager_id,
+                "action": command.action,
+                "data": serialized_data  # Full serialized object
+            })
+
+        return commands
+
 
     def process_related_field(self, field_name, related_model, related_data):
         validated_objects = []
@@ -200,37 +263,16 @@ class PlanSerializer(serializers.ModelSerializer):
         return validated_objects
 
     def get_related_serializer_class(self, related_model):
-        related_serializers = {
-            'CashReserve': CashReserveSerializer,
-            'Income': IncomeSerializer,
-            'Expense': ExpenseSerializer,
-            'Debt': DebtSerializer,
-            'TaxDeferredInvestment': TaxDeferredInvestmentSerializer,
-            'BrokerageInvestment': BrokerageInvestmentSerializer,
-            'IraInvestment': IraInvestmentSerializer,
-            'RothIraInvestment': RothIraInvestmentSerializer,
-        }
+        related_serializers = SERIALIZER_MAP
         return related_serializers.get(related_model.__name__)
 
     def create(self, validated_data):
-        # Extract and process related ManyToMany fields
-        many_to_many_fields = [
-            ('cash_reserves', CashReserve),
-            ('incomes', Income),
-            ('expenses', Expense),
-            ('debts', Debt),
-            ('tax_deferred_investments', TaxDeferredInvestment),
-            ('brokerage_investments', BrokerageInvestment),
-            ('ira_investments', IraInvestment),
-            ('roth_ira_investments', RothIraInvestment),
-        ]
 
         related_objects = {}
-        for field_name, related_model in many_to_many_fields:
+        for field_name, related_model in MANY_TO_MANY_FIELDS:
             related_data = validated_data.pop(field_name, [])
             related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
 
-        # Create the PlanConfig instance
         plan = super().create(validated_data)
 
         for field_name, objects in related_objects.items():
@@ -239,20 +281,8 @@ class PlanSerializer(serializers.ModelSerializer):
         return plan
 
     def update(self, instance, validated_data):
-        # Handle nested objects for updates
-        many_to_many_fields = [
-            ('cash_reserves', CashReserve),
-            ('incomes', Income),
-            ('expenses', Expense),
-            ('debts', Debt),
-            ('tax_deferred_investments', TaxDeferredInvestment),
-            ('brokerage_investments', BrokerageInvestment),
-            ('ira_investments', IraInvestment),
-            ('roth_ira_investments', RothIraInvestment),
-        ]
-
         related_objects = {}
-        for field_name, related_model in many_to_many_fields:
+        for field_name, related_model in MANY_TO_MANY_FIELDS:
             if field_name in validated_data:
                 related_data = validated_data.pop(field_name)
                 related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
