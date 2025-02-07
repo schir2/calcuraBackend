@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 
 from .models import BrokerageInvestment, BrokerageInvestmentTemplate, CashReserve, CashReserveTemplate, Debt, \
@@ -325,8 +326,21 @@ class TaxDeferredInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
 
+class PlanAdminForm(forms.ModelForm):
+    class Meta:
+        model = Plan
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field, forms.ModelMultipleChoiceField):
+                field.required = False
+
+
 @admin.register(Plan)
-class PlanConfigAdmin(admin.ModelAdmin):
+class PlanAdmin(admin.ModelAdmin):
+    form = PlanAdminForm
     list_display = (
         'name',
         'age',
@@ -342,14 +356,7 @@ class PlanConfigAdmin(admin.ModelAdmin):
     list_filter = ('insufficient_funds_strategy',)
     search_fields = ('name',)
 
-    filter_horizontal = (
-        'incomes',
-        'expenses',
-        'debts',
-        'tax_deferred_investments',
-        'brokerage_investments',
-        'ira_investments',
-    )
+    autocomplete_fields = ('incomes', 'expenses', 'debts', 'tax_deferred_investments', 'brokerage_investments', 'roth_ira_investments', 'ira_investments')
 
 
 @admin.register(PlanTemplate)

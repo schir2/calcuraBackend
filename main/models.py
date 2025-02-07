@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Max
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -614,7 +615,7 @@ class PlanABC(models.Model):
     incomes = models.ManyToManyField(
         'Income',
         related_name='plans',
-        verbose_name=_("Income Configurations")
+        verbose_name=_("Income Configurations"),
     )
     expenses = models.ManyToManyField(
         'Expense',
@@ -835,6 +836,14 @@ class CommandSequence(BaseModel):
     def order_commands(self):
         pass
 
+    def get_max_order(self):
+        max_order = self.sequence_commands.aggregate(max_order=Max('order'))['max_order']
+        return max_order or 0
+
+    def __str__(self):
+        return f'{self.name} {self.ordering_type}'
+
+
 class CommandSequenceCommand(models.Model):
     sequence = models.ForeignKey(CommandSequence, on_delete=models.CASCADE, related_name="sequence_commands")
     command = models.ForeignKey(Command, on_delete=models.CASCADE, related_name="command_instances")
@@ -844,3 +853,6 @@ class CommandSequenceCommand(models.Model):
     class Meta:
         unique_together = ("sequence", "command")
         ordering = ["order"]
+
+    def __str__(self):
+        return f'{self.sequence.plan} {self.sequence} ({self.command})'
