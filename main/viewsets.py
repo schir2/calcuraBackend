@@ -1,8 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import Http404
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from common.utils.db_utils import get_many_to_many_fields
@@ -41,7 +41,7 @@ from .serializers import (
     TaxDeferredInvestmentTemplateSerializer,
     PlanSerializer,
     PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraInvestmentSerializer,
-    RothIraInvestmentTemplateSerializer,
+    RothIraInvestmentTemplateSerializer, UserSerializer,
 )
 
 
@@ -175,3 +175,13 @@ class PlanViewSet(viewsets.ModelViewSet):
 class PlanTemplateViewSet(viewsets.ModelViewSet):
     queryset = PlanTemplate.objects.all()
     serializer_class = PlanTemplateSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=True, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)

@@ -21,7 +21,7 @@ from main.viewsets import (
     TaxDeferredInvestmentViewSet,
     TaxDeferredInvestmentTemplateViewSet,
     PlanViewSet,
-    PlanTemplateViewSet, RothIraInvestmentViewSet, RothIraInvestmentTemplateViewSet,
+    PlanTemplateViewSet, RothIraInvestmentViewSet, RothIraInvestmentTemplateViewSet, UserViewSet,
 )
 
 router = DefaultRouter()
@@ -43,6 +43,7 @@ router.register(r'tax-deferred-investments', TaxDeferredInvestmentViewSet)
 router.register(r'tax-deferred-investment-templates', TaxDeferredInvestmentTemplateViewSet)
 router.register(r'plans', PlanViewSet)
 router.register(r'plan-templates', PlanTemplateViewSet)
+router.register('users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

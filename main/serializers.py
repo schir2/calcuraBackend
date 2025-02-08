@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from rest_framework import serializers
 
@@ -242,7 +243,6 @@ class PlanSerializer(serializers.ModelSerializer):
 
         return commands
 
-
     def process_related_field(self, field_name, related_model, related_data):
         validated_objects = []
         for item in related_data:
@@ -305,3 +305,17 @@ class ManageRelatedModelSerializer(serializers.Serializer):
     related_model = serializers.CharField(max_length=255)
     related_id = serializers.IntegerField()
     action = serializers.ChoiceField(choices=['add', 'remove'])
+
+
+class UserSerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField()
+    password = serializers.CharField(write_only=True)
+
+    def get_permissions(self, obj):
+        return obj.get_all_permissions()
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+        'username', 'email', 'first_name', 'last_name', 'permissions', 'is_staff', 'is_active', 'is_superuser',
+        'groups', 'password')
