@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from main.views import CookieTokenObtainPairView, CookieTokenRefreshView
+from main.views import login_view, logout_view, get_csrf_token
 from main.viewsets import (
     BrokerageInvestmentViewSet,
     BrokerageInvestmentTemplateViewSet,
@@ -46,12 +46,15 @@ router.register(r'plan-templates', PlanTemplateViewSet)
 router.register('users', UserViewSet)
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('api/', include('rest_framework.urls')),
     path('users/', include('django.contrib.auth.urls', )),
     path('api/', include(router.urls)),
-    path('api/token/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
+    path("api/auth/login/", login_view, name="login"),
+    path("api/auth/logout/", logout_view, name="logout"),
+    path("api/auth/csrf/", get_csrf_token, name="csrf"),
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
