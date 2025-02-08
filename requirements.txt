@@ -5,3 +5,4 @@ django-filter==24.3
 django-currentuser==0.8.0
 django-cors-headers==4.6.0
 rich==13.9.4
+factory_boy==3.3.3
