@@ -3,7 +3,6 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -24,6 +23,7 @@ def login_view(request):
         return JsonResponse({"message": "Login successful", "user": {"username": user.username, "email": user.email}})
     else:
         return JsonResponse({"error": "Invalid credentials"}, status=400)
+
 
 @require_POST
 def logout_view(request):
