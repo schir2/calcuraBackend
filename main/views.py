@@ -25,8 +25,7 @@ def login_view(request):
     else:
         return JsonResponse({"error": "Invalid credentials"}, status=400)
 
-
-@api_view(['POST'])
+@require_POST
 def logout_view(request):
     """Logout user and remove session."""
     logout(request)
