@@ -806,7 +806,8 @@ class Command(models.Model):
 
     @property
     def manager_name(self):
-        return self.content_type.model_class().__name__
+        name = self.content_type.model_class().__name__
+        return f'{name[0].lower()}{name[1:]}Managers'
 
     @property
     def manager_id(self):

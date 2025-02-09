@@ -224,7 +224,7 @@ class PlanSerializer(serializers.ModelSerializer):
         for csc in sequence.get_commands():
             command = csc.command
             related_object = command.related_object
-            manager_name = command.content_type.model_class().__name__
+            manager_name = command.manager_name
             manager_id = command.object_id
 
             serializer_class = SERIALIZER_MAP.get(manager_name, None)
