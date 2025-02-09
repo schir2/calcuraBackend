@@ -64,7 +64,7 @@ from .models import (
     TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
     Plan,
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate,
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, CommandSequence, CommandSequenceCommand, Command,
 )
 
 MANY_TO_MANY_FIELDS = [
@@ -191,6 +191,49 @@ class TaxDeferredInvestmentTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CommandSequenceCommandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommandSequenceCommand
+        fields = '__all__'
+
+
+class CommandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Command
+        fields = '__all__'
+
+
+class CommandSequenceSerializer(serializers.ModelSerializer):
+    commands = serializers.SerializerMethodField()
+
+    def get_commands(self, obj):
+        commands = []
+        for csc in obj.get_commands():
+            command = csc.command
+            related_object = command.related_object
+            manager_name = command.manager_name
+            manager_id = command.object_id
+
+            serializer_class = SERIALIZER_MAP.get(manager_name, None)
+            serialized_data = serializer_class(related_object).data if serializer_class and related_object else None
+
+            commands.append({
+                "commandId": command.id,
+                "order": csc.order,
+                "name": command.name,
+                "label": command.label,
+                "managerName": manager_name,
+                "managerId": manager_id,
+                "action": command.action,
+                "is_active": csc.is_active,
+            })
+        return commands
+
+    class Meta:
+        model = CommandSequence
+        fields = '__all__'
+
+
 class PlanSerializer(serializers.ModelSerializer):
     cash_reserves = CashReserveSerializer(required=False, many=True)
     incomes = IncomeSerializer(required=False, many=True)
@@ -201,6 +244,7 @@ class PlanSerializer(serializers.ModelSerializer):
     ira_investments = IraInvestmentSerializer(required=False, many=True)
     roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True)
     commands = serializers.SerializerMethodField()
+    command_sequences = CommandSequenceSerializer(required=False, many=True)
 
     class Meta:
         model = Plan
@@ -317,5 +361,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = (
-        'username', 'email', 'first_name', 'last_name', 'permissions', 'is_staff', 'is_active', 'is_superuser',
-        'groups', 'password')
+            'username', 'email', 'first_name', 'last_name', 'permissions', 'is_staff', 'is_active', 'is_superuser',
+            'groups', 'password')

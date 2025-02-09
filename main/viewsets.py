@@ -22,7 +22,7 @@ from .models import (
     TaxDeferredInvestment,
     TaxDeferredInvestmentTemplate,
     Plan,
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate,
+    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, CommandSequence, CommandSequenceCommand, Command,
 )
 from .serializers import (
     BrokerageInvestmentSerializer,
@@ -41,7 +41,8 @@ from .serializers import (
     TaxDeferredInvestmentTemplateSerializer,
     PlanSerializer,
     PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraInvestmentSerializer,
-    RothIraInvestmentTemplateSerializer, UserSerializer,
+    RothIraInvestmentTemplateSerializer, UserSerializer, CommandSerializer, CommandSequenceSerializer,
+    CommandSequenceCommandSerializer,
 )
 
 
@@ -239,3 +240,17 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+
+class CommandViewSet(viewsets.ModelViewSet):
+    queryset = Command.objects.all()
+    serializer_class = CommandSerializer
+
+
+class CommandSequenceViewSet(viewsets.ModelViewSet):
+    queryset = CommandSequence.objects.all()
+    serializer_class = CommandSequenceSerializer
+
+class CommandSequenceCommandViewSet(viewsets.ModelViewSet):
+    queryset = CommandSequenceCommand.objects.all()
+    serializer_class = CommandSequenceCommandSerializer
