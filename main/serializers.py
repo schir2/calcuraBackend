@@ -138,9 +138,6 @@ class ExpenseTemplateSerializer(serializers.ModelSerializer):
 
 
 class IncomeSerializer(serializers.ModelSerializer):
-
-
-
     class Meta:
         model = Income
         fields = '__all__'
@@ -245,18 +242,18 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
 
 
 class PlanSerializer(serializers.ModelSerializer):
-    cash_reserves = CashReserveSerializer(required=False, many=True)
-    incomes = IncomeSerializer(required=False, many=True)
-    expenses = ExpenseSerializer(required=False, many=True)
-    debts = DebtSerializer(required=False, many=True)
-    tax_deferred_investments = TaxDeferredInvestmentSerializer(required=False, many=True)
-    brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True)
-    ira_investments = IraInvestmentSerializer(required=False, many=True)
-    roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True)
+    creator_details = UserSerializer(read_only=True, source='creator')
+    editor_details = UserSerializer(read_only=True, source='editor')
+    cash_reserves = CashReserveSerializer(required=False, many=True, read_only=True)
+    incomes = IncomeSerializer(required=False, many=True, read_only=True)
+    expenses = ExpenseSerializer(required=False, many=True, read_only=True)
+    debts = DebtSerializer(required=False, many=True, read_only=True)
+    tax_deferred_investments = TaxDeferredInvestmentSerializer(required=False, many=True, read_only=True)
+    brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True, read_only=True)
+    ira_investments = IraInvestmentSerializer(required=False, many=True, read_only=True)
+    roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True, read_only=True)
     commands = serializers.SerializerMethodField()
-    command_sequences = CommandSequenceSerializer(required=False, many=True)
-    creator = UserSerializer(read_only=True)
-    editor = UserSerializer(read_only=True)
+    command_sequences = CommandSequenceSerializer(required=False, many=True, read_only=True)
 
     class Meta:
         model = Plan
@@ -270,7 +267,6 @@ class PlanSerializer(serializers.ModelSerializer):
             data['commands'] = self.get_commands(instance)
 
         return data
-
 
     def get_commands(self, plan: Plan):
         sequence = plan.command_sequences.first()
@@ -294,57 +290,6 @@ class PlanSerializer(serializers.ModelSerializer):
             })
 
         return commands
-
-    def process_related_field(self, field_name, related_model, related_data):
-        validated_objects = []
-        for item in related_data:
-            item_id = item if isinstance(item, int) else item.get("id", None)
-            if isinstance(item_id, int):
-                try:
-                    obj = related_model.objects.get(id=item_id)
-                    validated_objects.append(obj)
-                except related_model.DoesNotExist:
-                    raise serializers.ValidationError({field_name: f'Object with ID {item} does not exist'})
-            elif isinstance(item, dict):
-                serializer_class = self.get_related_serializer_class(related_model)
-                obj_serializer = serializer_class(data=item)
-                obj_serializer.is_valid(raise_exception=True)
-                validated_objects.append(obj_serializer.save())
-            else:
-                raise serializers.ValidationError({field_name: "Each item must be either an ID or an object."})
-        return validated_objects
-
-    def get_related_serializer_class(self, related_model):
-        related_serializers = SERIALIZER_MAP
-        return related_serializers.get(related_model.__name__)
-
-    def create(self, validated_data):
-
-        related_objects = {}
-        for field_name, related_model in MANY_TO_MANY_FIELDS:
-            related_data = validated_data.pop(field_name, [])
-            related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
-
-        plan = super().create(validated_data)
-
-        for field_name, objects in related_objects.items():
-            getattr(plan, field_name).set(objects)
-
-        return plan
-
-
-
-    def update(self, instance, validated_data):
-        related_objects = {}
-        for field_name, related_model in MANY_TO_MANY_FIELDS:
-            if field_name in validated_data:
-                related_data = validated_data.pop(field_name)
-                related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
-        plan = super().update(instance, validated_data)
-        for field_name, objects in related_objects.items():
-            getattr(plan, field_name).set(objects)
-
-        return plan
 
 
 class PlanTemplateSerializer(serializers.ModelSerializer):
