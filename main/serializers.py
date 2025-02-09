@@ -3,6 +3,16 @@ from django.db.models import QuerySet
 from rest_framework import serializers
 
 
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'is_superuser',
+            'groups', 'password')
+
+
 class IncomeOrIdField(serializers.BaseSerializer):
     def to_internal_value(self, data):
         if isinstance(data, Income):
@@ -128,6 +138,9 @@ class ExpenseTemplateSerializer(serializers.ModelSerializer):
 
 
 class IncomeSerializer(serializers.ModelSerializer):
+
+
+
     class Meta:
         model = Income
         fields = '__all__'
@@ -210,20 +223,17 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
         commands = []
         for csc in obj.get_commands():
             command = csc.command
-            related_object = command.related_object
             manager_name = command.manager_name
             manager_id = command.object_id
 
-            serializer_class = SERIALIZER_MAP.get(manager_name, None)
-            serialized_data = serializer_class(related_object).data if serializer_class and related_object else None
-
             commands.append({
-                "commandId": command.id,
+                "command_id": command.id,
+                "command_sequence_command_id": csc.id,
                 "order": csc.order,
                 "name": command.name,
                 "label": command.label,
-                "managerName": manager_name,
-                "managerId": manager_id,
+                "manager_name": manager_name,
+                "manager_id": manager_id,
                 "action": command.action,
                 "is_active": csc.is_active,
             })
@@ -231,7 +241,7 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommandSequence
-        fields = '__all__'
+        fields = ('id', 'name', 'ordering_type', 'commands')
 
 
 class PlanSerializer(serializers.ModelSerializer):
@@ -245,6 +255,8 @@ class PlanSerializer(serializers.ModelSerializer):
     roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True)
     commands = serializers.SerializerMethodField()
     command_sequences = CommandSequenceSerializer(required=False, many=True)
+    creator = UserSerializer(read_only=True)
+    editor = UserSerializer(read_only=True)
 
     class Meta:
         model = Plan
@@ -259,6 +271,7 @@ class PlanSerializer(serializers.ModelSerializer):
 
         return data
 
+
     def get_commands(self, plan: Plan):
         sequence = plan.command_sequences.first()
         if not sequence:
@@ -267,12 +280,8 @@ class PlanSerializer(serializers.ModelSerializer):
         commands = []
         for csc in sequence.get_commands():
             command = csc.command
-            related_object = command.related_object
             manager_name = command.manager_name
             manager_id = command.object_id
-
-            serializer_class = SERIALIZER_MAP.get(manager_name, None)
-            serialized_data = serializer_class(related_object).data if serializer_class and related_object else None
 
             commands.append({
                 "commandId": command.id,
@@ -282,7 +291,6 @@ class PlanSerializer(serializers.ModelSerializer):
                 "managerName": manager_name,
                 "managerId": manager_id,
                 "action": command.action,
-                "data": serialized_data  # Full serialized object
             })
 
         return commands
@@ -324,15 +332,15 @@ class PlanSerializer(serializers.ModelSerializer):
 
         return plan
 
+
+
     def update(self, instance, validated_data):
         related_objects = {}
         for field_name, related_model in MANY_TO_MANY_FIELDS:
             if field_name in validated_data:
                 related_data = validated_data.pop(field_name)
                 related_objects[field_name] = self.process_related_field(field_name, related_model, related_data)
-
         plan = super().update(instance, validated_data)
-
         for field_name, objects in related_objects.items():
             getattr(plan, field_name).set(objects)
 
@@ -349,17 +357,3 @@ class ManageRelatedModelSerializer(serializers.Serializer):
     related_model = serializers.CharField(max_length=255)
     related_id = serializers.IntegerField()
     action = serializers.ChoiceField(choices=['add', 'remove'])
-
-
-class UserSerializer(serializers.ModelSerializer):
-    permissions = serializers.SerializerMethodField()
-    password = serializers.CharField(write_only=True)
-
-    def get_permissions(self, obj):
-        return obj.get_all_permissions()
-
-    class Meta:
-        model = get_user_model()
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'permissions', 'is_staff', 'is_active', 'is_superuser',
-            'groups', 'password')
