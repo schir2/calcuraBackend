@@ -1,5 +1,9 @@
 import json
-from django.db.utils import IntegrityError
+
+from allauth.account.models import EmailConfirmationHMAC, EmailConfirmation
+from allauth.account.utils import setup_user_email
+from django.db import transaction
+from allauth.account.utils import send_email_confirmation
 
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
@@ -39,33 +43,50 @@ def logout_view(request):
 
 @require_POST
 @csrf_protect
+@transaction.atomic
 def register_view(request):
     """
     Register a new user. Optionally send a verification email here.
     """
     data = json.loads(request.body)
-    username = data.get("username")
+    email = data.get("username")
     password = data.get("password")
 
 
-    if User.objects.filter(username=username).exists():
+    if User.objects.filter(email=email).exists():
         return JsonResponse({"error": "User already exists"}, status=400)
 
-    user = User(username=username, is_active=True)
-    user.set_password(password)
+    user = User.objects.create_user(email=email, username=email, password=password)
 
-    try:
-        user.save()
-    except IntegrityError as e:
-        return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    setup_user_email(request, user, [])
+    send_email_confirmation(request, user, signup=True)
 
     return JsonResponse({
         "message": "Registration successful",
         "user": {
-            "username": user.username,
             "email": user.email
         }
     }, status=status.HTTP_201_CREATED)
+
+
+@require_POST
+@csrf_protect
+def verify_view(request):
+    data = json.loads(request.body)
+    key = data.get("key")
+    email_confirmation = EmailConfirmationHMAC.from_key(key)
+    if not email_confirmation:
+        try:
+            email_confirmation = EmailConfirmation.objects.get(key=key)
+        except EmailConfirmation.DoesNotExist:
+            return JsonResponse(
+                {"error": "Invalid or expired confirmation key."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    email_confirmation.confirm(request)
+    login(request, email_confirmation.email_address.user)
+    return JsonResponse({"message": "Email verified. You can now log in."}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

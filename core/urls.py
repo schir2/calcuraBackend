@@ -23,7 +23,7 @@ from main.viewsets import (
     PlanTemplateViewSet, RothIraInvestmentViewSet, RothIraInvestmentTemplateViewSet, CommandSequenceCommandViewSet,
     CommandSequenceViewSet, CommandViewSet,
 )
-from users.views import login_view, logout_view, get_csrf_token, register_view
+from users.views import login_view, logout_view, get_csrf_token, register_view, verify_view
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
@@ -63,6 +63,8 @@ urlpatterns = [
     path("api/auth/logout/", logout_view, name="logout"),
     path("api/auth/register/", register_view, name="register"),
     path("api/auth/csrf-token/", get_csrf_token, name="csrf"),
+    path("api/auth/verify/", verify_view, name="verify"),
+    path('accounts/', include('allauth.urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
