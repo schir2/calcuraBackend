@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
@@ -92,6 +92,17 @@ def verify_view(request):
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
     return JsonResponse({"message": "Email verified. You can now log in."}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def email_exists_view(request):
+    """Checks if the user email is already registered. Returns boolean"""
+    data = json.loads(request.body)
+    email = data.get("email")
+    exists = User.objects.filter(email=email).exists()
+    return Response({"exists": exists}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

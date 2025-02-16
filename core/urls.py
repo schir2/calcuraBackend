@@ -23,7 +23,7 @@ from main.viewsets import (
     PlanTemplateViewSet, RothIraInvestmentViewSet, RothIraInvestmentTemplateViewSet, CommandSequenceCommandViewSet,
     CommandSequenceViewSet, CommandViewSet,
 )
-from users.views import login_view, logout_view, get_csrf_token, register_view, verify_view
+from users.views import login_view, logout_view, get_csrf_token, register_view, verify_view, email_exists_view
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
@@ -64,6 +64,7 @@ urlpatterns = [
     path("api/auth/register/", register_view, name="register"),
     path("api/auth/csrf-token/", get_csrf_token, name="csrf"),
     path("api/auth/verify/", verify_view, name="verify"),
+    path("api/auth/email-exists/", email_exists_view, name="email-exists"),
     path('accounts/', include('allauth.urls')),
 ]
 
