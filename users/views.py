@@ -71,6 +71,7 @@ def register_view(request):
 
 @require_POST
 @csrf_protect
+@transaction.atomic
 def verify_view(request):
     data = json.loads(request.body)
     key = data.get("key")
@@ -85,7 +86,11 @@ def verify_view(request):
             )
 
     email_confirmation.confirm(request)
-    login(request, email_confirmation.email_address.user)
+    user = email_confirmation.email_address.user
+    user.is_active = True
+    user.save()
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
     return JsonResponse({"message": "Email verified. You can now log in."}, status=status.HTTP_200_OK)
 
 
