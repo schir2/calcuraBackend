@@ -8,3 +8,4 @@ rich==13.9.4
 factory_boy==3.3.3
 djangorestframework-simplejwt==5.4
 django-allauth==65.4.1
+djangorestframework-camel-case==1.4.2

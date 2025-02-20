@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'main.apps.MainConfig',
     'rest_framework',
+    'djangorestframework_camel_case',
     'corsheaders',
     'users.apps.UsersConfig'
 ]
@@ -146,7 +147,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Keep Browsable API for debugging
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
