@@ -536,9 +536,6 @@ class TaxDeferredInvestmentABC(models.Model):
         abstract = True
 
 
-
-
-
 class TaxDeferredInvestment(BaseModel, TaxDeferredInvestmentABC):
     income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
 
@@ -830,6 +827,7 @@ class CommandSequence(BaseModel):
         default=OrderingType.CUSTOM,
         verbose_name=_("Ordering Type")
     )
+    commands = models.ManyToManyField('Command', through='CommandSequenceCommand', related_name='command_sequences', verbose_name=_("Commands"))
 
     def get_commands(self):
         return self.sequence_commands.all().order_by('order')
