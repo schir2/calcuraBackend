@@ -230,6 +230,10 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
             })
         return commands
 
+    def update(self, instance, validated_data):
+        #TODO Implement this method
+        return super().update(instance, validated_data)
+
     class Meta:
         model = CommandSequence
         fields = ('id', 'name', 'ordering_type', 'commands')
@@ -284,7 +288,6 @@ class PlanSerializer(serializers.ModelSerializer):
             })
 
         return commands
-
 
 class PlanTemplateSerializer(serializers.ModelSerializer):
     class Meta:
