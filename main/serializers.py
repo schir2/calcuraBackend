@@ -230,9 +230,20 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
             })
         return commands
 
+    def to_internal_value(self, data):
+        commands = data.pop("commands")
+        data = super().to_internal_value(data)
+        data['commands'] = commands
+        return data
+
     def update(self, instance, validated_data):
-        #TODO Implement this method
-        return super().update(instance, validated_data)
+        commands = validated_data.pop("commands")
+        instance = super().update(instance, validated_data)
+        command_sequence_commands = CommandSequenceCommand.objects.filter(pk__in=[command['command_sequence_command_id'] for command in commands])
+        for index, csc in enumerate(command_sequence_commands):
+            csc.order = commands[index]['order']
+            csc.is_active = commands[index]['is_active']
+        return instance
 
     class Meta:
         model = CommandSequence
@@ -288,6 +299,7 @@ class PlanSerializer(serializers.ModelSerializer):
             })
 
         return commands
+
 
 class PlanTemplateSerializer(serializers.ModelSerializer):
     class Meta:
