@@ -239,10 +239,18 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         commands = validated_data.pop("commands")
         instance = super().update(instance, validated_data)
-        command_sequence_commands = CommandSequenceCommand.objects.filter(pk__in=[command['command_sequence_command_id'] for command in commands])
-        for index, csc in enumerate(command_sequence_commands):
-            csc.order = commands[index]['order']
-            csc.is_active = commands[index]['is_active']
+
+        command_data_map = {cmd["command_sequence_command_id"]: cmd for cmd in commands}
+        command_sequence_commands = CommandSequenceCommand.objects.filter(pk__in=command_data_map.keys())
+
+        for csc in command_sequence_commands:
+            command_data = command_data_map.get(csc.pk)
+            if command_data:
+                csc.order = command_data["order"]
+                csc.is_active = command_data["is_active"]
+
+        CommandSequenceCommand.objects.bulk_update(command_sequence_commands, ["order", "is_active"])
+
         return instance
 
     class Meta:
