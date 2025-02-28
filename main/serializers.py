@@ -6,55 +6,9 @@ from users.serializers import UserSerializer
 
 User = get_user_model()
 
-
-class IncomeOrIdField(serializers.BaseSerializer):
-    def to_internal_value(self, data):
-        if isinstance(data, Income):
-            return data
-        income_id = None
-        if isinstance(data, int):
-            income_id = data
-        elif isinstance(data, dict):
-            income_id = data.get("id", None)
-
-        if isinstance(income_id, int):
-            try:
-                return Income.objects.get(id=income_id)
-            except Income.DoesNotExist:
-                raise serializers.ValidationError(
-                    f"Income with ID {income_id} does not exist."
-                )
-
-        elif isinstance(data, dict):
-            # If a dict includes an `id`, assume partial update of an existing object
-            income_id = data.get("id", None)
-            if income_id:
-                try:
-                    instance = Income.objects.get(id=income_id)
-                    serializer = IncomeSerializer(instance, data=data, partial=True)
-                except Income.DoesNotExist:
-                    raise serializers.ValidationError(
-                        f"Income with ID {income_id} does not exist."
-                    )
-            else:
-                # Create new Income if no ID is given
-                serializer = IncomeSerializer(data=data)
-
-            serializer.is_valid(raise_exception=True)
-            return serializer.save()
-
-        else:
-            raise serializers.ValidationError(
-                "Invalid input format. Must be either an ID or an object."
-            )
-
-    def to_representation(self, value):
-        return IncomeSerializer(value).data
-
-
-from .models import (
-    BrokerageInvestment,
-    BrokerageInvestmentTemplate,
+from main.models import (
+    Brokerage,
+    BrokerageTemplate,
     CashReserve,
     CashReserveTemplate,
     Debt,
@@ -63,12 +17,12 @@ from .models import (
     ExpenseTemplate,
     Income,
     IncomeTemplate,
-    IraInvestment,
-    IraInvestmentTemplate,
-    TaxDeferredInvestment,
-    TaxDeferredInvestmentTemplate,
+    Ira,
+    IraTemplate,
+    TaxDeferred,
+    TaxDeferredTemplate,
     Plan,
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, CommandSequence, CommandSequenceCommand, Command,
+    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command,
 )
 
 MANY_TO_MANY_FIELDS = [
@@ -76,22 +30,22 @@ MANY_TO_MANY_FIELDS = [
     ('incomes', Income),
     ('expenses', Expense),
     ('debts', Debt),
-    ('tax_deferred_investments', TaxDeferredInvestment),
-    ('brokerage_investments', BrokerageInvestment),
-    ('ira_investments', IraInvestment),
-    ('roth_ira_investments', RothIraInvestment),
+    ('tax_deferred_s', TaxDeferred),
+    ('brokerage_s', Brokerage),
+    ('ira_s', Ira),
+    ('roth_ira_s', RothIra),
 ]
 
 
-class BrokerageInvestmentSerializer(serializers.ModelSerializer):
+class BrokerageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BrokerageInvestment
+        model = Brokerage
         fields = '__all__'
 
 
-class BrokerageInvestmentTemplateSerializer(serializers.ModelSerializer):
+class BrokerageTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BrokerageInvestmentTemplate
+        model = BrokerageTemplate
         fields = '__all__'
 
 
@@ -145,35 +99,80 @@ class IncomeTemplateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IraInvestmentSerializer(serializers.ModelSerializer):
+class IraSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IraInvestment
+        model = Ira
         fields = '__all__'
 
 
-class IraInvestmentTemplateSerializer(serializers.ModelSerializer):
+class IraTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IraInvestmentTemplate
+        model = IraTemplate
         fields = '__all__'
 
 
-class RothIraInvestmentSerializer(serializers.ModelSerializer):
+class RothIraSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RothIraInvestment
+        model = RothIra
         fields = '__all__'
 
 
-class RothIraInvestmentTemplateSerializer(serializers.ModelSerializer):
+class RothIraTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RothIraInvestmentTemplate
+        model = RothIraTemplate
         fields = '__all__'
 
 
-class TaxDeferredInvestmentSerializer(serializers.ModelSerializer):
+class IncomeOrIdField(serializers.BaseSerializer):
+    def to_internal_value(self, data):
+        if isinstance(data, Income):
+            return data
+        income_id = None
+        if isinstance(data, int):
+            income_id = data
+        elif isinstance(data, dict):
+            income_id = data.get("id", None)
+
+        if isinstance(income_id, int):
+            try:
+                return Income.objects.get(id=income_id)
+            except Income.DoesNotExist:
+                raise serializers.ValidationError(
+                    f"Income with ID {income_id} does not exist."
+                )
+
+        elif isinstance(data, dict):
+            # If a dict includes an `id`, assume partial update of an existing object
+            income_id = data.get("id", None)
+            if income_id:
+                try:
+                    instance = Income.objects.get(id=income_id)
+                    serializer = IncomeSerializer(instance, data=data, partial=True)
+                except Income.DoesNotExist:
+                    raise serializers.ValidationError(
+                        f"Income with ID {income_id} does not exist."
+                    )
+            else:
+                # Create new Income if no ID is given
+                serializer = IncomeSerializer(data=data)
+
+            serializer.is_valid(raise_exception=True)
+            return serializer.save()
+
+        else:
+            raise serializers.ValidationError(
+                "Invalid input format. Must be either an ID or an object."
+            )
+
+    def to_representation(self, value):
+        return IncomeSerializer(value).data
+
+
+class TaxDeferredSerializer(serializers.ModelSerializer):
     income = IncomeOrIdField(required=False, many=False, allow_null=True)
 
     class Meta:
-        model = TaxDeferredInvestment
+        model = TaxDeferred
         fields = '__all__'
 
 
@@ -182,16 +181,16 @@ SERIALIZER_MAP = {
     'Debt': DebtSerializer,
     'Expense': ExpenseSerializer,
     'Income': IncomeSerializer,
-    'BrokerageInvestment': BrokerageInvestmentSerializer,
-    'IraInvestment': IraInvestmentSerializer,
-    'RothIraInvestment': RothIraInvestmentSerializer,
-    'TaxDeferredInvestment': TaxDeferredInvestmentSerializer,
+    'Brokerage': BrokerageSerializer,
+    'Ira': IraSerializer,
+    'RothIra': RothIraSerializer,
+    'TaxDeferred': TaxDeferredSerializer,
 }
 
 
-class TaxDeferredInvestmentTemplateSerializer(serializers.ModelSerializer):
+class TaxDeferredTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TaxDeferredInvestmentTemplate
+        model = TaxDeferredTemplate
         fields = '__all__'
 
 
@@ -265,10 +264,10 @@ class PlanSerializer(serializers.ModelSerializer):
     incomes = IncomeSerializer(required=False, many=True, read_only=True)
     expenses = ExpenseSerializer(required=False, many=True, read_only=True)
     debts = DebtSerializer(required=False, many=True, read_only=True)
-    tax_deferred_investments = TaxDeferredInvestmentSerializer(required=False, many=True, read_only=True)
-    brokerage_investments = BrokerageInvestmentSerializer(required=False, many=True, read_only=True)
-    ira_investments = IraInvestmentSerializer(required=False, many=True, read_only=True)
-    roth_ira_investments = RothIraInvestmentSerializer(required=False, many=True, read_only=True)
+    tax_deferreds = TaxDeferredSerializer(required=False, many=True, read_only=True)
+    brokerages = BrokerageSerializer(required=False, many=True, read_only=True)
+    iras = IraSerializer(required=False, many=True, read_only=True)
+    roth_iras = RothIraSerializer(required=False, many=True, read_only=True)
     commands = serializers.SerializerMethodField()
     command_sequences = CommandSequenceSerializer(required=False, many=True, read_only=True)
 

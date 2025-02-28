@@ -3,12 +3,13 @@ from django.db import transaction
 from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from common.utils.db_utils import get_many_to_many_fields
 from .models import (
-    BrokerageInvestment,
-    BrokerageInvestmentTemplate,
+    Brokerage,
+    BrokerageTemplate,
     CashReserve,
     CashReserveTemplate,
     Debt,
@@ -17,16 +18,16 @@ from .models import (
     ExpenseTemplate,
     Income,
     IncomeTemplate,
-    IraInvestment,
-    IraInvestmentTemplate,
-    TaxDeferredInvestment,
-    TaxDeferredInvestmentTemplate,
+    Ira,
+    IraTemplate,
+    TaxDeferred,
+    TaxDeferredTemplate,
     Plan,
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, CommandSequence, CommandSequenceCommand, Command,
+    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command,
 )
-from .serializers import (
-    BrokerageInvestmentSerializer,
-    BrokerageInvestmentTemplateSerializer,
+from main.serializers import (
+    BrokerageSerializer,
+    BrokerageTemplateSerializer,
     CashReserveSerializer,
     CashTemplateSerializer,
     DebtSerializer,
@@ -35,36 +36,61 @@ from .serializers import (
     ExpenseTemplateSerializer,
     IncomeSerializer,
     IncomeTemplateSerializer,
-    IraInvestmentSerializer,
-    IraInvestmentTemplateSerializer,
-    TaxDeferredInvestmentSerializer,
-    TaxDeferredInvestmentTemplateSerializer,
+    IraSerializer,
+    IraTemplateSerializer,
+    TaxDeferredSerializer,
+    TaxDeferredTemplateSerializer,
     PlanSerializer,
-    PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraInvestmentSerializer,
-    RothIraInvestmentTemplateSerializer, CommandSerializer, CommandSequenceSerializer,
+    PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraSerializer,
+    RothIraTemplateSerializer, CommandSerializer, CommandSequenceSerializer,
     CommandSequenceCommandSerializer,
 )
 
 User = get_user_model()
 
 
-class BrokerageInvestmentViewSet(viewsets.ModelViewSet):
-    queryset = BrokerageInvestment.objects.all()
-    serializer_class = BrokerageInvestmentSerializer
+class PlanRelatedViewSet(viewsets.ModelViewSet):
+    """
+    A generic viewset that auto-filters by `plan` when accessed under `/plans/<plan_id>/child/`
+    and assigns `plan` automatically on create.
+    """
+
+    plan_lookup_field = 'plan_pk'
+    plan_field_name = 'plan'
+
+    def get_queryset(self):
+        plan_id = self.kwargs.get(self.plan_lookup_field)
+        if plan_id:
+            return self.queryset.filter(**{self.plan_field_name: plan_id})
+        return self.queryset
+
+    def perform_create(self, serializer):
+        plan_id = self.kwargs.get(self.plan_lookup_field)
+        if plan_id:
+            plan = get_object_or_404(self.get_queryset().model._meta.get_field(self.plan_field_name).related_model,
+                                     id=plan_id)
+            serializer.save(**{self.plan_field_name: plan})
+        else:
+            serializer.save()
+
+
+class BrokerageViewSet(PlanRelatedViewSet):
+    queryset = Brokerage.objects.all()
+    serializer_class = BrokerageSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class BrokerageInvestmentTemplateViewSet(viewsets.ModelViewSet):
-    queryset = BrokerageInvestmentTemplate.objects.all()
-    serializer_class = BrokerageInvestmentTemplateSerializer
+class BrokerageTemplateViewSet(PlanRelatedViewSet):
+    queryset = BrokerageTemplate.objects.all()
+    serializer_class = BrokerageTemplateSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class CashReserveViewSet(viewsets.ModelViewSet):
+class CashReserveViewSet(PlanRelatedViewSet):
     queryset = CashReserve.objects.all()
     serializer_class = CashReserveSerializer
 
@@ -72,7 +98,7 @@ class CashReserveViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class CashReserveTemplateViewSet(viewsets.ModelViewSet):
+class CashReserveTemplateViewSet(PlanRelatedViewSet):
     queryset = CashReserveTemplate.objects.all()
     serializer_class = CashTemplateSerializer
 
@@ -80,7 +106,7 @@ class CashReserveTemplateViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class DebtViewSet(viewsets.ModelViewSet):
+class DebtViewSet(PlanRelatedViewSet):
     queryset = Debt.objects.all()
     serializer_class = DebtSerializer
 
@@ -88,7 +114,7 @@ class DebtViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class DebtTemplateViewSet(viewsets.ModelViewSet):
+class DebtTemplateViewSet(PlanRelatedViewSet):
     queryset = DebtTemplate.objects.all()
     serializer_class = DebtTemplateSerializer
 
@@ -96,7 +122,7 @@ class DebtTemplateViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class ExpenseViewSet(viewsets.ModelViewSet):
+class ExpenseViewSet(PlanRelatedViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
@@ -104,7 +130,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class ExpenseTemplateViewSet(viewsets.ModelViewSet):
+class ExpenseTemplateViewSet(PlanRelatedViewSet):
     queryset = ExpenseTemplate.objects.all()
     serializer_class = ExpenseTemplateSerializer
 
@@ -112,7 +138,7 @@ class ExpenseTemplateViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class IncomeViewSet(viewsets.ModelViewSet):
+class IncomeViewSet(PlanRelatedViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
 
@@ -120,7 +146,7 @@ class IncomeViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class IncomeTemplateViewSet(viewsets.ModelViewSet):
+class IncomeTemplateViewSet(PlanRelatedViewSet):
     queryset = IncomeTemplate.objects.all()
     serializer_class = IncomeTemplateSerializer
 
@@ -128,41 +154,41 @@ class IncomeTemplateViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class IraInvestmentViewSet(viewsets.ModelViewSet):
-    queryset = IraInvestment.objects.all()
-    serializer_class = IraInvestmentSerializer
+class IraViewSet(PlanRelatedViewSet):
+    queryset = Ira.objects.all()
+    serializer_class = IraSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class IraInvestmentTemplateViewSet(viewsets.ModelViewSet):
-    queryset = IraInvestmentTemplate.objects.all()
-    serializer_class = IraInvestmentTemplateSerializer
+class IraTemplateViewSet(PlanRelatedViewSet):
+    queryset = IraTemplate.objects.all()
+    serializer_class = IraTemplateSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class RothIraInvestmentViewSet(viewsets.ModelViewSet):
-    queryset = RothIraInvestment.objects.all()
-    serializer_class = RothIraInvestmentSerializer
+class RothIraViewSet(PlanRelatedViewSet):
+    queryset = RothIra.objects.all()
+    serializer_class = RothIraSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class RothIraInvestmentTemplateViewSet(viewsets.ModelViewSet):
-    queryset = RothIraInvestmentTemplate.objects.all()
-    serializer_class = RothIraInvestmentTemplateSerializer
+class RothIraTemplateViewSet(PlanRelatedViewSet):
+    queryset = RothIraTemplate.objects.all()
+    serializer_class = RothIraTemplateSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
 
 
-class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
-    queryset = TaxDeferredInvestment.objects.all()
-    serializer_class = TaxDeferredInvestmentSerializer
+class TaxDeferredViewSet(PlanRelatedViewSet):
+    queryset = TaxDeferred.objects.all()
+    serializer_class = TaxDeferredSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
@@ -171,9 +197,9 @@ class TaxDeferredInvestmentViewSet(viewsets.ModelViewSet):
         return super().get_serializer(*args, **kwargs)
 
 
-class TaxDeferredInvestmentTemplateViewSet(viewsets.ModelViewSet):
-    queryset = TaxDeferredInvestmentTemplate.objects.all()
-    serializer_class = TaxDeferredInvestmentTemplateSerializer
+class TaxDeferredTemplateViewSet(PlanRelatedViewSet):
+    queryset = TaxDeferredTemplate.objects.all()
+    serializer_class = TaxDeferredTemplateSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)
@@ -234,16 +260,16 @@ class PlanTemplateViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(creator=self.request.user)
 
 
-class CommandViewSet(viewsets.ModelViewSet):
+class CommandViewSet(PlanRelatedViewSet):
     queryset = Command.objects.all()
     serializer_class = CommandSerializer
 
 
-class CommandSequenceViewSet(viewsets.ModelViewSet):
+class CommandSequenceViewSet(PlanRelatedViewSet):
     queryset = CommandSequence.objects.all()
     serializer_class = CommandSequenceSerializer
 
 
-class CommandSequenceCommandViewSet(viewsets.ModelViewSet):
+class CommandSequenceCommandViewSet(PlanRelatedViewSet):
     queryset = CommandSequenceCommand.objects.all()
     serializer_class = CommandSequenceCommandSerializer

@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from common.models import BaseModel
 
 
-class BrokerageInvestmentABC(models.Model):
+class BrokerageABC(models.Model):
     class ContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -51,15 +51,15 @@ class BrokerageInvestmentABC(models.Model):
         abstract = True
 
 
-class BrokerageInvestment(BaseModel, BrokerageInvestmentABC):
+class Brokerage(BaseModel, BrokerageABC):
     class Meta:
-        verbose_name = _("Brokerage Investment")
-        verbose_name_plural = _("Brokerage Investment")
+        verbose_name = _("Brokerage ")
+        verbose_name_plural = _("Brokerage ")
 
 
-class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
+class BrokerageTemplate(BaseModel, BrokerageABC):
     """
-    A template for creating BrokerageInvestmentConfig objects.
+    A template for creating BrokerageConfig objects.
     """
     description = models.TextField(
         null=True,
@@ -69,8 +69,8 @@ class BrokerageInvestmentTemplate(BaseModel, BrokerageInvestmentABC):
     )
 
     class Meta:
-        verbose_name = _("Brokerage Investment Template")
-        verbose_name_plural = _("Brokerage Investment Templates")
+        verbose_name = _("Brokerage  Template")
+        verbose_name_plural = _("Brokerage  Templates")
 
 
 class CashReserveABC(models.Model):
@@ -326,7 +326,7 @@ class IncomeTemplate(BaseModel, IncomeABC):
         verbose_name_plural = _("Income Configuration Templates")
 
 
-class IraInvestmentABC(models.Model):
+class IraABC(models.Model):
     class IraContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -367,15 +367,15 @@ class IraInvestmentABC(models.Model):
         abstract = True
 
 
-class IraInvestment(BaseModel, IraInvestmentABC):
+class Ira(BaseModel, IraABC):
     income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
 
     class Meta:
-        verbose_name = _("IRA Investment Configuration")
-        verbose_name_plural = _("IRA Investment Configurations")
+        verbose_name = _("IRA  Configuration")
+        verbose_name_plural = _("IRA  Configurations")
 
 
-class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
+class IraTemplate(BaseModel, IraABC):
     description = models.TextField(
         null=True,
         blank=True,
@@ -384,11 +384,11 @@ class IraInvestmentTemplate(BaseModel, IraInvestmentABC):
     )
 
     class Meta:
-        verbose_name = _("IRA Investment Configuration Template")
-        verbose_name_plural = _("IRA Investment Configuration Templates")
+        verbose_name = _("IRA  Configuration Template")
+        verbose_name_plural = _("IRA  Configuration Templates")
 
 
-class RothIraInvestmentABC(models.Model):
+class RothIraABC(models.Model):
     class RothIraContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         PERCENTAGE_OF_INCOME = 'percentage_of_income', _('Percentage of Income')
@@ -429,15 +429,15 @@ class RothIraInvestmentABC(models.Model):
         abstract = True
 
 
-class RothIraInvestment(BaseModel, IraInvestmentABC):
+class RothIra(BaseModel, IraABC):
     income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
 
     class Meta:
-        verbose_name = _("Roth IRA Investment Configuration")
-        verbose_name_plural = _("Roth IRA Investment Configurations")
+        verbose_name = _("Roth IRA  Configuration")
+        verbose_name_plural = _("Roth IRA  Configurations")
 
 
-class RothIraInvestmentTemplate(BaseModel, IraInvestmentABC):
+class RothIraTemplate(BaseModel, IraABC):
     description = models.TextField(
         null=True,
         blank=True,
@@ -446,11 +446,11 @@ class RothIraInvestmentTemplate(BaseModel, IraInvestmentABC):
     )
 
     class Meta:
-        verbose_name = _("Roth IRA Investment Configuration Template")
-        verbose_name_plural = _("Roth IRA Investment Configuration Templates")
+        verbose_name = _("Roth IRA  Configuration Template")
+        verbose_name_plural = _("Roth IRA  Configuration Templates")
 
 
-class TaxDeferredInvestmentABC(models.Model):
+class TaxDeferredABC(models.Model):
     class EmployerContributionStrategy(models.TextChoices):
         NONE = 'none', _('None')
         PERCENTAGE_OF_CONTRIBUTION = 'percentage_of_contribution', _('Percentage of Contribution')
@@ -536,15 +536,15 @@ class TaxDeferredInvestmentABC(models.Model):
         abstract = True
 
 
-class TaxDeferredInvestment(BaseModel, TaxDeferredInvestmentABC):
+class TaxDeferred(BaseModel, TaxDeferredABC):
     income = models.ForeignKey(Income, on_delete=models.SET_NULL, null=True, verbose_name=_("Income"))
 
     class Meta:
-        verbose_name = _("Tax-Deferred Investment Configuration")
-        verbose_name_plural = _("Tax-Deferred Investment Configurations")
+        verbose_name = _("Tax-Deferred  Configuration")
+        verbose_name_plural = _("Tax-Deferred  Configurations")
 
 
-class TaxDeferredInvestmentTemplate(BaseModel, TaxDeferredInvestmentABC):
+class TaxDeferredTemplate(BaseModel, TaxDeferredABC):
     description = models.TextField(
         null=True,
         blank=True,
@@ -553,8 +553,8 @@ class TaxDeferredInvestmentTemplate(BaseModel, TaxDeferredInvestmentABC):
     )
 
     class Meta:
-        verbose_name = _("Tax-Deferred Investment Configuration Template")
-        verbose_name_plural = _("Tax-Deferred Investment Configuration Templates")
+        verbose_name = _("Tax-Deferred  Configuration Template")
+        verbose_name_plural = _("Tax-Deferred  Configuration Templates")
 
 
 class PlanABC(models.Model):
@@ -624,25 +624,25 @@ class PlanABC(models.Model):
         related_name='plans',
         verbose_name=_("Debt Configurations")
     )
-    tax_deferred_investments = models.ManyToManyField(
-        'TaxDeferredInvestment',
+    tax_deferreds = models.ManyToManyField(
+        'TaxDeferred',
         related_name='plans',
-        verbose_name=_("Tax-Deferred Investment Configurations")
+        verbose_name=_("Tax-Deferred  Configurations")
     )
-    brokerage_investments = models.ManyToManyField(
-        'BrokerageInvestment',
+    brokerages = models.ManyToManyField(
+        'Brokerage',
         related_name='plans',
-        verbose_name=_("Brokerage Investment Configurations")
+        verbose_name=_("Brokerage  Configurations")
     )
-    ira_investments = models.ManyToManyField(
-        'IraInvestment',
+    iras = models.ManyToManyField(
+        'Ira',
         related_name='plans',
-        verbose_name=_("IRA Investment Configurations")
+        verbose_name=_("IRA  Configurations")
     )
-    roth_ira_investments = models.ManyToManyField(
-        'RothIraInvestment',
+    roth_iras = models.ManyToManyField(
+        'RothIra',
         related_name='plans',
-        verbose_name=_("Roth IRA Investment Configurations")
+        verbose_name=_("Roth IRA  Configurations")
     )
 
     life_expectancy = models.PositiveIntegerField(
@@ -753,27 +753,27 @@ class PlanTemplate(BaseModel):
         blank=True,
     )
     tax_deferred_investment_templates = models.ManyToManyField(
-        'TaxDeferredInvestmentTemplate',
+        'TaxDeferredTemplate',
         related_name='plan_templates',
-        verbose_name=_("Tax-Deferred Investment Templates"),
+        verbose_name=_("Tax-Deferred  Templates"),
         blank=True,
     )
     brokerage_investment_templates = models.ManyToManyField(
-        'BrokerageInvestmentTemplate',
+        'BrokerageTemplate',
         related_name='plan_templates',
-        verbose_name=_("Brokerage Investment Templates"),
+        verbose_name=_("Brokerage  Templates"),
         blank=True,
     )
     ira_investment_templates = models.ManyToManyField(
-        'IraInvestmentTemplate',
+        'IraTemplate',
         related_name='plan_templates',
-        verbose_name=_("IRA Investment Templates"),
+        verbose_name=_("IRA  Templates"),
         blank=True,
     )
     roth_ira_investment_templates = models.ManyToManyField(
-        'RothIraInvestmentTemplate',
+        'RothIraTemplate',
         related_name='plan_templates',
-        verbose_name=_("Roth IRA Investment Templates"),
+        verbose_name=_("Roth IRA  Templates"),
         blank=True,
     )
 

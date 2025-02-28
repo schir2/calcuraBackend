@@ -1,14 +1,14 @@
 from django import forms
 from django.contrib import admin
 
-from .models import BrokerageInvestment, BrokerageInvestmentTemplate, CashReserve, CashReserveTemplate, Debt, \
-    DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraInvestmentTemplate, \
-    IraInvestment, Expense, TaxDeferredInvestmentTemplate, TaxDeferredInvestment, Plan, \
-    PlanTemplate, RothIraInvestment, RothIraInvestmentTemplate, Command, CommandSequence, CommandSequenceCommand
+from .models import Brokerage, BrokerageTemplate, CashReserve, CashReserveTemplate, Debt, \
+    DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraTemplate, \
+    Ira, Expense, TaxDeferredTemplate, TaxDeferred, Plan, \
+    PlanTemplate, RothIra, RothIraTemplate, Command, CommandSequence, CommandSequenceCommand
 
 
-@admin.register(BrokerageInvestment)
-class BrokerageInvestmentConfigAdmin(admin.ModelAdmin):
+@admin.register(Brokerage)
+class BrokerageConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'growth_rate',
@@ -26,8 +26,8 @@ class BrokerageInvestmentConfigAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(BrokerageInvestmentTemplate)
-class BrokerageInvestmentTemplateAdmin(admin.ModelAdmin):
+@admin.register(BrokerageTemplate)
+class BrokerageTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'growth_rate',
@@ -197,8 +197,8 @@ class IncomeTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
 
-@admin.register(IraInvestment)
-class IraInvestmentConfigAdmin(admin.ModelAdmin):
+@admin.register(Ira)
+class IraConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'growth_rate',
@@ -216,8 +216,8 @@ class IraInvestmentConfigAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(IraInvestmentTemplate)
-class IraInvestmentTemplateAdmin(admin.ModelAdmin):
+@admin.register(IraTemplate)
+class IraTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'description',
@@ -236,8 +236,8 @@ class IraInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
 
-@admin.register(RothIraInvestment)
-class RothIraInvestmentConfigAdmin(admin.ModelAdmin):
+@admin.register(RothIra)
+class RothIraConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'growth_rate',
@@ -255,8 +255,8 @@ class RothIraInvestmentConfigAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(RothIraInvestmentTemplate)
-class RothIraInvestmentTemplateAdmin(admin.ModelAdmin):
+@admin.register(RothIraTemplate)
+class RothIraTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'description',
@@ -275,8 +275,8 @@ class RothIraInvestmentTemplateAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
 
-@admin.register(TaxDeferredInvestment)
-class TaxDeferredInvestmentConfigAdmin(admin.ModelAdmin):
+@admin.register(TaxDeferred)
+class TaxDeferredConfigAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'growth_rate',
@@ -300,8 +300,8 @@ class TaxDeferredInvestmentConfigAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(TaxDeferredInvestmentTemplate)
-class TaxDeferredInvestmentTemplateAdmin(admin.ModelAdmin):
+@admin.register(TaxDeferredTemplate)
+class TaxDeferredTemplateAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'description',
@@ -356,7 +356,7 @@ class PlanAdmin(admin.ModelAdmin):
     list_filter = ('insufficient_funds_strategy',)
     search_fields = ('name',)
 
-    autocomplete_fields = ('incomes', 'expenses', 'debts', 'tax_deferred_investments', 'brokerage_investments', 'roth_ira_investments', 'ira_investments')
+    autocomplete_fields = ('incomes', 'expenses', 'debts', 'tax_deferreds', 'brokerages', 'roth_iras', 'iras')
 
 
 @admin.register(PlanTemplate)

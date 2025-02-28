@@ -2,17 +2,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.dispatch import receiver
 
-from main.models import Income, TaxDeferredInvestment, Debt, Command, Expense, BrokerageInvestment, IraInvestment, \
-    RothIraInvestment, CashReserve, Plan, CommandSequence, CommandSequenceCommand
+from main.models import Income, TaxDeferred, Debt, Command, Expense, Brokerage, Ira, \
+    RothIra, CashReserve, Plan, CommandSequence, CommandSequenceCommand
 
 RELATED = {
     "Debt",
     "Expense",
     "Income",
-    "TaxDeferredInvestment",
-    "BrokerageInvestment",
-    "IraInvestment",
-    "RothIraInvestment",
+    "TaxDeferred",
+    "Brokerage",
+    "Ira",
+    "RothIra",
     "CashReserve",
 }
 
@@ -20,10 +20,10 @@ RELATED_MODELS = {
     "debts": Debt,
     "expenses": Expense,
     "incomes": Income,
-    "tax_deferred_investments": TaxDeferredInvestment,
-    "brokerage_investments": BrokerageInvestment,
-    "ira_investments": IraInvestment,
-    "roth_ira_investments": RothIraInvestment,
+    "tax_deferreds": TaxDeferred,
+    "brokerages": Brokerage,
+    "iras": Ira,
+    "roth_iras": RothIra,
     "cash_reserves": CashReserve,
 }
 
@@ -31,10 +31,10 @@ RELATED_MODELS = {
 @receiver(post_save, sender=Debt)
 @receiver(post_save, sender=Expense)
 @receiver(post_save, sender=Income)
-@receiver(post_save, sender=TaxDeferredInvestment)
-@receiver(post_save, sender=BrokerageInvestment)
-@receiver(post_save, sender=IraInvestment)
-@receiver(post_save, sender=RothIraInvestment)
+@receiver(post_save, sender=TaxDeferred)
+@receiver(post_save, sender=Brokerage)
+@receiver(post_save, sender=Ira)
+@receiver(post_save, sender=RothIra)
 @receiver(post_save, sender=CashReserve)
 
 def create_command_for_related_models(sender, instance, created, **kwargs):
@@ -52,10 +52,10 @@ def create_command_for_related_models(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Debt)
 @receiver(post_delete, sender=Expense)
 @receiver(post_delete, sender=Income)
-@receiver(post_delete, sender=TaxDeferredInvestment)
-@receiver(post_delete, sender=BrokerageInvestment)
-@receiver(post_delete, sender=IraInvestment)
-@receiver(post_delete, sender=RothIraInvestment)
+@receiver(post_delete, sender=TaxDeferred)
+@receiver(post_delete, sender=Brokerage)
+@receiver(post_delete, sender=Ira)
+@receiver(post_delete, sender=RothIra)
 @receiver(post_delete, sender=CashReserve)
 def delete_command_for_related_models(sender, instance, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)

@@ -1,8 +1,8 @@
 import factory
 from django.contrib.contenttypes.models import ContentType
 from main.models import (
-    Plan, Debt, Expense, Income, TaxDeferredInvestment,
-    BrokerageInvestment, IraInvestment, RothIraInvestment, CashReserve,
+    Plan, Debt, Expense, Income, TaxDeferred,
+    Brokerage, Ira, RothIra, CashReserve,
     Command, CommandSequence, CommandSequenceCommand
 )
 
