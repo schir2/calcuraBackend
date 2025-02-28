@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import Http404
-from rest_framework import viewsets
+from rest_framework import viewsets, response, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -55,8 +55,12 @@ class PlanRelatedViewSet(viewsets.ModelViewSet):
     and assigns `plan` automatically on create.
     """
 
+    def get_model_name(self):
+        name = self.get_queryset().model._meta.get_field(self.plan_field_name).field.attname
+        return name
+
     plan_lookup_field = 'plan_pk'
-    plan_field_name = 'plan'
+    plan_field_name = 'plans'
 
     def get_queryset(self):
         plan_id = self.kwargs.get(self.plan_lookup_field)
@@ -64,14 +68,21 @@ class PlanRelatedViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(**{self.plan_field_name: plan_id})
         return self.queryset
 
+    @transaction.atomic
     def perform_create(self, serializer):
         plan_id = self.kwargs.get(self.plan_lookup_field)
+        obj = serializer.save()
         if plan_id:
-            plan = get_object_or_404(self.get_queryset().model._meta.get_field(self.plan_field_name).related_model,
-                                     id=plan_id)
-            serializer.save(**{self.plan_field_name: plan})
-        else:
-            serializer.save()
+            plan = get_object_or_404(Plan, pk=plan_id)
+            obj.plans.add(plan)
+
+    def destroy(self, request, *args, **kwargs):
+        plan_id = self.kwargs.get(self.plan_lookup_field)
+        if plan_id:
+            plan = get_object_or_404(Plan, pk=plan_id)
+            getattr(plan, self.get_model_name()).remove(*self.get_queryset())
+            return response.Response(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
 
 
 class BrokerageViewSet(PlanRelatedViewSet):
