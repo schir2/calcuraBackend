@@ -1,12 +1,28 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.http import Http404
 from rest_framework import viewsets, response, status
-from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
 
-from common.utils.db_utils import get_many_to_many_fields
+from main.serializers import (
+    BrokerageSerializer,
+    BrokerageTemplateSerializer,
+    CashReserveSerializer,
+    CashTemplateSerializer,
+    DebtSerializer,
+    DebtTemplateSerializer,
+    ExpenseSerializer,
+    ExpenseTemplateSerializer,
+    IncomeSerializer,
+    IncomeTemplateSerializer,
+    IraSerializer,
+    IraTemplateSerializer,
+    TaxDeferredSerializer,
+    TaxDeferredTemplateSerializer,
+    PlanSerializer,
+    PlanTemplateSerializer, RothIraSerializer,
+    RothIraTemplateSerializer, CommandSerializer, CommandSequenceSerializer,
+    CommandSequenceCommandSerializer,
+)
 from .models import (
     Brokerage,
     BrokerageTemplate,
@@ -24,26 +40,6 @@ from .models import (
     TaxDeferredTemplate,
     Plan,
     PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command,
-)
-from main.serializers import (
-    BrokerageSerializer,
-    BrokerageTemplateSerializer,
-    CashReserveSerializer,
-    CashTemplateSerializer,
-    DebtSerializer,
-    DebtTemplateSerializer,
-    ExpenseSerializer,
-    ExpenseTemplateSerializer,
-    IncomeSerializer,
-    IncomeTemplateSerializer,
-    IraSerializer,
-    IraTemplateSerializer,
-    TaxDeferredSerializer,
-    TaxDeferredTemplateSerializer,
-    PlanSerializer,
-    PlanTemplateSerializer, ManageRelatedModelSerializer, RothIraSerializer,
-    RothIraTemplateSerializer, CommandSerializer, CommandSequenceSerializer,
-    CommandSequenceCommandSerializer,
 )
 
 User = get_user_model()
@@ -75,6 +71,7 @@ class PlanRelatedViewSet(viewsets.ModelViewSet):
         if plan_id:
             plan = get_object_or_404(Plan, pk=plan_id)
             obj.plans.add(plan)
+        return super().perform_create(serializer)
 
     def destroy(self, request, *args, **kwargs):
         plan_id = self.kwargs.get(self.plan_lookup_field)

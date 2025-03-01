@@ -9,6 +9,15 @@ from django.utils.translation import gettext_lazy as _
 from common.models import BaseModel
 
 
+class Frequency(models.TextChoices):
+    MONTHLY = 'monthly', _('Monthly')
+    WEEKLY = 'weekly', _('Weekly')
+    BIWEEKLY = 'biweekly', _('Biweekly')
+    QUARTERLY = 'quarterly', _('Quarterly')
+    ANNUAL = 'annual', _('Annual')
+    ONE_TIME = 'one_time', _('One Time')
+
+
 class BrokerageABC(models.Model):
     class ContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
@@ -167,6 +176,12 @@ class DebtABC(models.Model):
         blank=True
     )
 
+    frequency = models.CharField(
+        max_length=50,
+        choices=Frequency.choices,
+        verbose_name=_("Frequency")
+    )
+
     def __str__(self):
         return self.name
 
@@ -197,14 +212,6 @@ class ExpenseABC(models.Model):
     class ExpenseType(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
         VARIABLE = 'variable', _('Variable')
-
-    class Frequency(models.TextChoices):
-        MONTHLY = 'monthly', _('Monthly')
-        WEEKLY = 'weekly', _('Weekly')
-        BIWEEKLY = 'biweekly', _('Biweekly')
-        QUARTERLY = 'quarterly', _('Quarterly')
-        ANNUALLY = 'annual', _('Annually')
-        ONE_TIME = 'one_time', _('One Time')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     amount = models.FloatField(
@@ -270,12 +277,6 @@ class ExpenseTemplate(BaseModel, ExpenseABC):
 class IncomeABC(models.Model):
     class IncomeType(models.TextChoices):
         ORDINARY = 'ordinary', _('Ordinary')
-
-    class Frequency(models.TextChoices):
-        WEEKLY = 'weekly', _('Weekly')
-        MONTHLY = 'monthly', _('Monthly')
-        QUARTERLY = 'quarterly', _('Quarterly')
-        ANNUAL = 'annual', _('Annual')
 
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     gross_income = models.FloatField(
@@ -827,7 +828,8 @@ class CommandSequence(BaseModel):
         default=OrderingType.CUSTOM,
         verbose_name=_("Ordering Type")
     )
-    commands = models.ManyToManyField('Command', through='CommandSequenceCommand', related_name='command_sequences', verbose_name=_("Commands"))
+    commands = models.ManyToManyField('Command', through='CommandSequenceCommand', related_name='command_sequences',
+                                      verbose_name=_("Commands"))
 
     def get_commands(self):
         return self.sequence_commands.all().order_by('order')
