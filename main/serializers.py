@@ -213,8 +213,8 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
         commands = []
         for csc in obj.get_commands():
             command = csc.command
-            manager_name = command.manager_name
-            manager_id = command.object_id
+            model_name = f'{command.model_name[0].lower()}{command.model_name[1:]}'
+            model_id = command.object_id
 
             commands.append({
                 "command_id": command.id,
@@ -222,8 +222,8 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
                 "order": csc.order,
                 "name": command.name,
                 "label": command.label,
-                "manager_name": manager_name,
-                "manager_id": manager_id,
+                "model_name": model_name,
+                "model_id": model_id,
                 "action": command.action,
                 "is_active": csc.is_active,
             })
@@ -268,45 +268,11 @@ class PlanSerializer(serializers.ModelSerializer):
     brokerages = BrokerageSerializer(required=False, many=True, read_only=True)
     iras = IraSerializer(required=False, many=True, read_only=True)
     roth_iras = RothIraSerializer(required=False, many=True, read_only=True)
-    commands = serializers.SerializerMethodField()
     command_sequences = CommandSequenceSerializer(required=False, many=True, read_only=True)
 
     class Meta:
         model = Plan
         fields = '__all__'
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        is_many = isinstance(instance, QuerySet)
-        if not is_many:
-            data['commands'] = self.get_commands(instance)
-
-        return data
-
-    def get_commands(self, plan: Plan):
-        sequence = plan.command_sequences.first()
-        if not sequence:
-            return []
-
-        commands = []
-        for csc in sequence.get_commands():
-            command = csc.command
-            manager_name = command.manager_name
-            manager_id = command.object_id
-
-            commands.append({
-                "commandId": command.id,
-                "order": csc.order,
-                "name": command.name,
-                "label": command.label,
-                "managerName": manager_name,
-                "managerId": manager_id,
-                "action": command.action,
-            })
-
-        return commands
-
 
 class PlanTemplateSerializer(serializers.ModelSerializer):
     class Meta:

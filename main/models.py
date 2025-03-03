@@ -591,11 +591,6 @@ class PlanABC(models.Model):
         default=InsufficientFundsStrategy.NONE
     )
 
-    growth_rate = models.FloatField(
-        verbose_name=_("Growth Rate"),
-        help_text=_("Annual Growth rate as a percentage.")
-    )
-
     growth_application_strategy = models.CharField(
         max_length=50,
         choices=GrowthApplicationStrategy.choices,
@@ -803,12 +798,12 @@ class Command(models.Model):
         return getattr(self.related_object, "label", str(self.related_object))
 
     @property
-    def manager_name(self):
+    def model_name(self):
         name = self.content_type.model_class().__name__
-        return f'{name[0].lower()}{name[1:]}Managers'
+        return name
 
     @property
-    def manager_id(self):
+    def model_id(self):
         return self.object_id
 
     def __str__(self):

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from rest_framework import viewsets, response, status
 from rest_framework.generics import get_object_or_404
@@ -45,6 +46,30 @@ from .models import (
 User = get_user_model()
 
 
+def create_command_sequence_commands(plan_instance: Plan, pk_set, model):
+    content_type = ContentType.objects.get_for_model(model)
+    sequences = CommandSequence.objects.filter(
+        plan=plan_instance,
+    )
+    if not sequences:
+        sequences = [CommandSequence.objects.create(
+            plan=plan_instance,
+            name= f"{plan_instance.name} Commands")]
+
+    for sequence in sequences:
+        max_order = sequence.get_max_order()
+
+        commands = Command.objects.filter(content_type=content_type, object_id__in=pk_set).select_related(
+            'content_type')
+        for command in commands:
+            max_order += 1
+            command_sequence_command, created = CommandSequenceCommand.objects.get_or_create(
+                sequence=sequence,
+                command=command,
+                order=max_order
+            )
+
+
 class PlanRelatedViewSet(viewsets.ModelViewSet):
     """
     A generic viewset that auto-filters by `plan` when accessed under `/plans/<plan_id>/child/`
@@ -71,7 +96,23 @@ class PlanRelatedViewSet(viewsets.ModelViewSet):
         if plan_id:
             plan = get_object_or_404(Plan, pk=plan_id)
             obj.plans.add(plan)
+            obj_pk = obj.pk
+            obj_model_class = obj._meta.model
+            create_command_sequence_commands(plan, {obj_pk}, obj_model_class)
+
         return super().perform_create(serializer)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        plan_id = self.kwargs.get(self.plan_lookup_field)
+        obj = serializer.save()
+        if plan_id:
+            plan = get_object_or_404(Plan, pk=plan_id)
+            obj.plans.add(plan)
+            obj_pk = obj.pk
+            obj_model_class = obj._meta.model
+            create_command_sequence_commands(plan, {obj_pk}, obj_model_class)
+
 
     def destroy(self, request, *args, **kwargs):
         plan_id = self.kwargs.get(self.plan_lookup_field)

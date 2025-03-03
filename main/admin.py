@@ -388,7 +388,7 @@ class PlanTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(Command)
 class CommandAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "label", "manager_name", "manager_id", "action")
+    list_display = ("id", "name", "label", "model_name", "model_id", "action")
     search_fields = ("action",)
     list_filter = ("action",)
 
