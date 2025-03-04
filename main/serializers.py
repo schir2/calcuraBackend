@@ -230,13 +230,14 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
         return commands
 
     def to_internal_value(self, data):
-        commands = data.pop("commands")
+        commands = data.pop("commands") if 'commands' in data else []
         data = super().to_internal_value(data)
-        data['commands'] = commands
+        if commands:
+            data['commands'] = commands
         return data
 
     def update(self, instance, validated_data):
-        commands = validated_data.pop("commands")
+        commands = validated_data.pop("commands") if 'commands' in validated_data else []
         instance = super().update(instance, validated_data)
 
         command_data_map = {cmd["command_sequence_command_id"]: cmd for cmd in commands}
@@ -254,7 +255,7 @@ class CommandSequenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CommandSequence
-        fields = ('id', 'name', 'ordering_type', 'commands')
+        fields = ('id', 'name', 'ordering_type', 'commands', 'plan')
 
 
 class PlanSerializer(serializers.ModelSerializer):

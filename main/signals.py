@@ -36,7 +36,6 @@ RELATED_MODELS = {
 @receiver(post_save, sender=Ira)
 @receiver(post_save, sender=RothIra)
 @receiver(post_save, sender=CashReserve)
-
 def create_command_for_related_models(sender, instance, created, **kwargs):
     """ Creates a Command when a related model is created and adds it to the Plan’s CommandSequence """
     if created:
@@ -48,15 +47,14 @@ def create_command_for_related_models(sender, instance, created, **kwargs):
         )
 
 
-
-@receiver(post_delete, sender=Debt)
-@receiver(post_delete, sender=Expense)
 @receiver(post_delete, sender=Income)
-@receiver(post_delete, sender=TaxDeferred)
+@receiver(post_delete, sender=Expense)
+@receiver(post_delete, sender=Debt)
+@receiver(post_delete, sender=CashReserve)
 @receiver(post_delete, sender=Brokerage)
 @receiver(post_delete, sender=Ira)
 @receiver(post_delete, sender=RothIra)
-@receiver(post_delete, sender=CashReserve)
+@receiver(post_delete, sender=TaxDeferred)
 def delete_command_for_related_models(sender, instance, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)
     Command.objects.filter(content_type=content_type, object_id=instance.id).delete()
@@ -66,9 +64,7 @@ def delete_command_for_related_models(sender, instance, **kwargs):
 def handle_plan_association(sender, instance: Plan, action, pk_set, model, **kwargs):
     if not isinstance(instance, Plan) or model._meta.object_name not in RELATED:
         return
-
     content_type = ContentType.objects.get_for_model(model)
-
     if action == "post_add":
         sequences = CommandSequence.objects.filter(
             plan=instance,
@@ -76,7 +72,7 @@ def handle_plan_association(sender, instance: Plan, action, pk_set, model, **kwa
         if not sequences:
             sequences = [CommandSequence.objects.create(
                 plan=instance,
-                name= f"{instance.name} Commands")]
+                name=f"{instance.name} Commands")]
 
         for sequence in sequences:
             max_order = sequence.get_max_order()
@@ -96,3 +92,24 @@ def handle_plan_association(sender, instance: Plan, action, pk_set, model, **kwa
             return
         commands = Command.objects.filter(content_type=content_type, object_id__in=pk_set)
         CommandSequenceCommand.objects.filter(sequence__in=sequences, command__in=commands).delete()
+
+
+@receiver(post_save, sender=CommandSequence)
+def add_commands_to_new_command_sequence(sender, instance: CommandSequence, created: bool, **kwargs):
+    plan = instance.plan
+    if created:
+        max_order = instance.get_max_order()
+        commands = []
+        for related_attr, related_model_class in RELATED_MODELS.items():
+            related_items = getattr(plan, related_attr)
+            pk_set = related_items.values_list('pk')
+            content_type = ContentType.objects.get_for_model(related_model_class)
+            for command in Command.objects.filter(content_type=content_type, object_id__in=pk_set):
+                commands.append(command)
+
+        for command in commands:
+            max_order += 1
+            command_sequence_command, created = CommandSequenceCommand.objects.get_or_create(
+                sequence=instance,
+                command=command,
+                order=max_order)
