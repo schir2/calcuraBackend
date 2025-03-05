@@ -94,6 +94,12 @@ def handle_plan_association(sender, instance: Plan, action, pk_set, model, **kwa
         CommandSequenceCommand.objects.filter(sequence__in=sequences, command__in=commands).delete()
 
 
+@receiver(post_save, sender=Plan)
+def add_initial_command_sequence_to_plan(instance: Plan, created: bool, **kwargs):
+    plan = instance
+    CommandSequence.objects.create(plan=plan, name=plan.name)
+
+
 @receiver(post_save, sender=CommandSequence)
 def add_commands_to_new_command_sequence(sender, instance: CommandSequence, created: bool, **kwargs):
     plan = instance.plan
