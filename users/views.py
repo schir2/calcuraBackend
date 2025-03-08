@@ -23,7 +23,7 @@ User = get_user_model()
 def login_view(request):
     """Authenticate user and create a session."""
     data = json.loads(request.body)
-    username = data.get("username")
+    username = data.get("email")
     password = data.get("password")
 
     user = authenticate(request, username=username, password=password)
