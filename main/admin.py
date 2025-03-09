@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Brokerage, BrokerageTemplate, CashReserve, CashReserveTemplate, Debt, \
     DebtTemplate, ExpenseTemplate, Income, IncomeTemplate, IraTemplate, \
     Ira, Expense, TaxDeferredTemplate, TaxDeferred, Plan, \
-    PlanTemplate, RothIra, RothIraTemplate, Command, CommandSequence, CommandSequenceCommand
+    PlanTemplate, RothIra, RothIraTemplate, Command, CommandSequence, CommandSequenceCommand, Hsa
 
 
 @admin.register(Brokerage)
@@ -15,6 +15,23 @@ class BrokerageConfigAdmin(admin.ModelAdmin):
         'initial_balance',
         'contribution_strategy',
         'contribution_percentage',
+        'contribution_fixed_amount',
+        'created_at',
+        'edited_at',
+        'creator',
+        'editor',
+    )
+    readonly_fields = ('created_at', 'edited_at', 'creator', 'editor')
+    list_filter = ('contribution_strategy',)
+    search_fields = ('name',)
+
+@admin.register(Hsa)
+class HsaConfigAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'growth_rate',
+        'initial_balance',
+        'contribution_strategy',
         'contribution_fixed_amount',
         'created_at',
         'edited_at',

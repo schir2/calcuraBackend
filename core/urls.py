@@ -21,7 +21,7 @@ from main.viewsets import (
     TaxDeferredTemplateViewSet,
     PlanViewSet,
     PlanTemplateViewSet, RothIraViewSet, RothIraTemplateViewSet, CommandSequenceCommandViewSet,
-    CommandSequenceViewSet, CommandViewSet,
+    CommandSequenceViewSet, CommandViewSet, HsaViewSet,
 )
 from users.views import login_view, logout_view, get_csrf_token, register_view, verify_view, email_exists_view
 from users.viewsets import UserViewSet, ProfileViewSet
@@ -33,6 +33,7 @@ router.register('debts', DebtViewSet, basename='debt')
 router.register('expenses', ExpenseViewSet, basename='expense')
 router.register('incomes', IncomeViewSet, basename='income')
 router.register('iras', IraViewSet, basename='ira')
+router.register('hsas', HsaViewSet, basename='hsa')
 router.register('roth-iras', RothIraViewSet, basename='roth-ira')
 router.register('tax-deferreds', TaxDeferredViewSet, basename='tax-deferred')
 router.register('commands', CommandViewSet, basename='command')

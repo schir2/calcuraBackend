@@ -22,7 +22,7 @@ from main.serializers import (
     PlanSerializer,
     PlanTemplateSerializer, RothIraSerializer,
     RothIraTemplateSerializer, CommandSerializer, CommandSequenceSerializer,
-    CommandSequenceCommandSerializer,
+    CommandSequenceCommandSerializer, HsaSerializer,
 )
 from .models import (
     Brokerage,
@@ -40,7 +40,7 @@ from .models import (
     TaxDeferred,
     TaxDeferredTemplate,
     Plan,
-    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command,
+    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command, Hsa,
 )
 
 User = get_user_model()
@@ -126,6 +126,14 @@ class PlanRelatedViewSet(viewsets.ModelViewSet):
 class BrokerageViewSet(PlanRelatedViewSet):
     queryset = Brokerage.objects.all()
     serializer_class = BrokerageSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(creator=self.request.user)
+
+
+class HsaViewSet(PlanRelatedViewSet):
+    queryset = Hsa.objects.all()
+    serializer_class = HsaSerializer
 
     def get_queryset(self):
         return self.queryset.filter(creator=self.request.user)

@@ -19,9 +19,8 @@ from main.models import (
     Ira,
     IraTemplate,
     TaxDeferred,
-    TaxDeferredTemplate,
-    Plan,
-    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command,
+    TaxDeferredTemplate, Plan,
+    PlanTemplate, RothIra, RothIraTemplate, CommandSequence, CommandSequenceCommand, Command, Hsa,
 )
 
 MANY_TO_MANY_FIELDS = [
@@ -29,10 +28,11 @@ MANY_TO_MANY_FIELDS = [
     ('incomes', Income),
     ('expenses', Expense),
     ('debts', Debt),
-    ('tax_deferred_s', TaxDeferred),
-    ('brokerage_s', Brokerage),
-    ('ira_s', Ira),
-    ('roth_ira_s', RothIra),
+    ('tax_deferreds', TaxDeferred),
+    ('brokerages', Brokerage),
+    ('iras', Ira),
+    ('roth_iras', RothIra),
+    ('hsas', Hsa)
 ]
 
 
@@ -87,6 +87,12 @@ class ExpenseTemplateSerializer(serializers.ModelSerializer):
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Income
+        fields = '__all__'
+
+
+class HsaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hsa
         fields = '__all__'
 
 
