@@ -3,7 +3,7 @@ from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.dispatch import receiver
 
 from main.models import Income, TaxDeferred, Debt, Command, Expense, Brokerage, Ira, \
-    RothIra, CashReserve, Plan, CommandSequence, CommandSequenceCommand
+    RothIra, CashReserve, Plan, CommandSequence, CommandSequenceCommand, Hsa
 
 RELATED = {
     "Debt",
@@ -14,6 +14,7 @@ RELATED = {
     "Ira",
     "RothIra",
     "CashReserve",
+    "Hsa",
 }
 
 RELATED_MODELS = {
@@ -25,6 +26,7 @@ RELATED_MODELS = {
     "iras": Ira,
     "roth_iras": RothIra,
     "cash_reserves": CashReserve,
+    "hsas":Hsa,
 }
 
 
@@ -36,6 +38,7 @@ RELATED_MODELS = {
 @receiver(post_save, sender=Ira)
 @receiver(post_save, sender=RothIra)
 @receiver(post_save, sender=CashReserve)
+@receiver(post_save, sender=Hsa)
 def create_command_for_related_models(sender, instance, created, **kwargs):
     """ Creates a Command when a related model is created and adds it to the Plan’s CommandSequence """
     if created:
@@ -55,6 +58,7 @@ def create_command_for_related_models(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Ira)
 @receiver(post_delete, sender=RothIra)
 @receiver(post_delete, sender=TaxDeferred)
+@receiver(post_delete, sender=Hsa)
 def delete_command_for_related_models(sender, instance, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)
     Command.objects.filter(content_type=content_type, object_id=instance.id).delete()
