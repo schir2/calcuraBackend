@@ -669,12 +669,18 @@ class PlanABC(models.Model):
     iras = models.ManyToManyField(
         'Ira',
         related_name='plans',
-        verbose_name=_("IRA  Configurations")
+        verbose_name=_("IRAs")
     )
     roth_iras = models.ManyToManyField(
         'RothIra',
         related_name='plans',
-        verbose_name=_("Roth IRA  Configurations")
+        verbose_name=_("Roth IRAs")
+    )
+
+    hsas = models.ManyToManyField(
+        'Hsa',
+        related_name='plans',
+        verbose_name=_("Hsas")
     )
 
     life_expectancy = models.PositiveIntegerField(
