@@ -4,7 +4,8 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from users.serializers import UserSerializer
+from users.models import Profile
+from users.serializers import UserSerializer, ProfileSerializer
 
 User = get_user_model()
 
@@ -27,3 +28,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED)
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all().select_related('user')
+    serializer_class = ProfileSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user_id=self.request.user.id)

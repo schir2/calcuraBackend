@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
 from rest_framework import serializers
 
 from users.serializers import UserSerializer
@@ -274,6 +273,7 @@ class PlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plan
         fields = '__all__'
+
 
 class PlanTemplateSerializer(serializers.ModelSerializer):
     class Meta:

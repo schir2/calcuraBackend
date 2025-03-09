@@ -24,7 +24,7 @@ from main.viewsets import (
     CommandSequenceViewSet, CommandViewSet,
 )
 from users.views import login_view, logout_view, get_csrf_token, register_view, verify_view, email_exists_view
-from users.viewsets import UserViewSet
+from users.viewsets import UserViewSet, ProfileViewSet
 
 router = DefaultRouter()
 router.register('brokerages', BrokerageViewSet, basename='brokerage')
@@ -40,6 +40,7 @@ router.register('command-sequences', CommandSequenceViewSet, basename='command-s
 router.register('command-sequence-commands', CommandSequenceCommandViewSet, basename='command-sequence-command')
 router.register('plans', PlanViewSet, basename='plan')
 router.register('users', UserViewSet, basename='user')
+router.register('profiles', ProfileViewSet, basename='profile')
 
 plan_router = NestedDefaultRouter(router, r'plans', lookup='plan')
 plan_router.register(r'brokerages', BrokerageViewSet, basename='plan-brokerage')

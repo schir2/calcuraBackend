@@ -49,7 +49,7 @@ def register_view(request):
     Register a new user. Optionally send a verification email here.
     """
     data = json.loads(request.body)
-    email = data.get("username")
+    email = data.get("email")
     password = data.get("password")
 
 
