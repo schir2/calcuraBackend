@@ -60,10 +60,46 @@ class BrokerageABC(models.Model):
         abstract = True
 
 
+class Hsa(models.Model):
+    class ContributionStrategy(models.TextChoices):
+        FIXED = 'fixed', _('Fixed')
+
+    name = models.CharField(max_length=255, verbose_name=_("Name"))
+    growth_rate = models.FloatField(
+        help_text=_("Annual growth rate as a percentage"),
+        verbose_name=_("Growth Rate")
+    )
+    initial_balance = models.FloatField(
+        help_text=_("Initial balance in the investment account"),
+        verbose_name=_("Initial Balance")
+    )
+
+    contribution_strategy = models.CharField(
+        max_length=50,
+        choices=ContributionStrategy.choices,
+        default=ContributionStrategy.FIXED,
+        verbose_name=_("Contribution Strategy")
+    )
+
+    contribution_fixed_amount = models.FloatField(
+        null=True,
+        blank=True,
+        help_text=_("Fixed amount contributed annually"),
+        verbose_name=_("Contribution Fixed Amount")
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("HSA ")
+        verbose_name_plural = _("HSAs ")
+
+
 class Brokerage(BaseModel, BrokerageABC):
     class Meta:
         verbose_name = _("Brokerage ")
-        verbose_name_plural = _("Brokerage ")
+        verbose_name_plural = _("Brokerages ")
 
 
 class BrokerageTemplate(BaseModel, BrokerageABC):
@@ -852,3 +888,19 @@ class CommandSequenceCommand(models.Model):
 
     def __str__(self):
         return f'{self.sequence.plan} {self.sequence} ({self.command})'
+
+
+class GlossaryTerm(BaseModel):
+    term = models.CharField(verbose_name=_("Glossary Term"), max_length=255)
+    slug = models.SlugField(verbose_name=_("Slug"), unique=True)
+    definition = models.TextField(verbose_name=_("Definition"), blank=True)
+    body = models.TextField(verbose_name=_("Body"), blank=True, null=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, related_name="children", blank=True, null=True)
+    related_terms= models.ManyToManyField('self', related_name='related_to', symmetrical=True, verbose_name=_("Related Terms"))
+
+    class Meta:
+        verbose_name = _("Glossary Term")
+        verbose_name_plural = _("Glossary Terms")
+
+    def __str__(self):
+        return f'{self.slug}'
