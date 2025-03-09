@@ -60,7 +60,7 @@ class BrokerageABC(models.Model):
         abstract = True
 
 
-class Hsa(models.Model):
+class Hsa(BaseModel):
     class ContributionStrategy(models.TextChoices):
         FIXED = 'fixed', _('Fixed')
 

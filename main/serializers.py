@@ -274,6 +274,7 @@ class PlanSerializer(serializers.ModelSerializer):
     brokerages = BrokerageSerializer(required=False, many=True, read_only=True)
     iras = IraSerializer(required=False, many=True, read_only=True)
     roth_iras = RothIraSerializer(required=False, many=True, read_only=True)
+    hsas = HsaSerializer(required=False, many=True, read_only=True)
     command_sequences = CommandSequenceSerializer(required=False, many=True, read_only=True)
 
     class Meta:
