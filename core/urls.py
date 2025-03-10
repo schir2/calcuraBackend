@@ -50,6 +50,7 @@ plan_router.register(r'debts', DebtViewSet, basename='plan-debt')
 plan_router.register(r'expenses', ExpenseViewSet, basename='plan-expense')
 plan_router.register(r'incomes', IncomeViewSet, basename='plan-income')
 plan_router.register(r'iras', IraViewSet, basename='plan-ira')
+plan_router.register(r'hsas', IraViewSet, basename='plan-hsa')
 plan_router.register(r'roth-iras', RothIraViewSet, basename='plan-roth-ira')
 plan_router.register(r'tax-deferreds', TaxDeferredViewSet, basename='plan-tax-deferred')
 
