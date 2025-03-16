@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'main.apps.MainConfig',
+    'blog.apps.BlogConfig',
     'drf_redesign',
     'rest_framework',
     'djangorestframework_camel_case',

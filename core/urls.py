@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested.routers import NestedDefaultRouter, DefaultRouter
 
+from blog.viewsets import ArticleViewSet, TopicViewSet, TagViewSet, ArticleSeriesViewSet
 from main.viewsets import (
     BrokerageViewSet,
     BrokerageTemplateViewSet,
@@ -27,6 +28,12 @@ from users.views import login_view, logout_view, get_csrf_token, register_view, 
 from users.viewsets import UserViewSet, ProfileViewSet
 
 router = DefaultRouter()
+router.register('articles', ArticleViewSet, basename='article')
+router.register('topics', TopicViewSet, basename='topic')
+router.register('tags', TagViewSet, basename='tag')
+router.register('article-series', ArticleSeriesViewSet, basename='article-series')
+article_router = NestedDefaultRouter(router, r'articles', lookup='article')
+
 router.register('brokerages', BrokerageViewSet, basename='brokerage')
 router.register('cash-reserves', CashReserveViewSet, basename='cash-reserve')
 router.register('debts', DebtViewSet, basename='debt')
