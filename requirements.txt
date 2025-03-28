@@ -11,3 +11,5 @@ django-allauth==65.4.1
 djangorestframework-camel-case==1.4.2
 drf-redesign==0.4.0
 drf-nested-routers==0.94.1
+Pillow
+gunicorn==23.0.0
